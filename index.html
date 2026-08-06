@@ -104,13 +104,13 @@
 </div>
 
 <script>
-const DAYS_DEFAULT = ["Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+const DAYS_DEFAULT = ["Senin","Selasa","Rabu","Kamis","Jumat","Sabtu","Minggu"];
 const dayJpContainer = document.getElementById('dayJpInputs');
 const output = document.getElementById('output');
 const exportArea = document.getElementById('exportArea');
 
 // default JP per day: weekdays 8, Sabtu 5
-const defaultJp = {Senin:8, Selasa:8, Rabu:8, Kamis:8, Jumat:6, Sabtu:5};
+const defaultJp = {Senin:8, Selasa:8, Rabu:8, Kamis:8, Jumat:6, Sabtu:6, Minggu:6};
 
 function buildDayJpInputs(){
   dayJpContainer.innerHTML = '';
