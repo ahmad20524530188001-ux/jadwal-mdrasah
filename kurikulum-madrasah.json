@@ -1,0 +1,273 @@
+{
+  "_meta": {
+    "sumber": "Keputusan Menteri Agama RI Nomor 1503 Tahun 2025 tentang Perubahan atas KMA Nomor 450 Tahun 2024 tentang Pedoman Implementasi Kurikulum pada RA, MI, MTs, MA, dan MAK",
+    "catatan": "Alokasi dalam satuan JP per tahun. Untuk JP per minggu = total JP per tahun / minggu_efektif. 1 JP mata pelajaran wajib berbeda durasi menitnya per jenjang (lihat field jp_menit tiap kelas).",
+    "struktur_field": {
+      "intra": "Alokasi Intrakurikuler per tahun (JP)",
+      "ko": "Alokasi Kokurikuler per tahun (JP)",
+      "total": "Total JP per tahun (intra + ko)"
+    }
+  },
+
+  "MI": {
+    "nama": "Madrasah Ibtidaiyah",
+    "kelas": {
+      "1": {
+        "minggu_efektif": 36, "jp_menit": 35,
+        "wajib": [
+          {"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 36, "total": 108},
+          {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Fikih", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Bahasa Arab", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Pendidikan Pancasila", "intra": 144, "ko": 36, "total": 180},
+          {"mapel": "Bahasa Indonesia", "intra": 252, "ko": 36, "total": 288},
+          {"mapel": "Matematika", "intra": 144, "ko": 0, "total": 144},
+          {"mapel": "PJOK", "intra": 108, "ko": 0, "total": 108},
+          {"mapel": "Seni dan Budaya", "intra": 108, "ko": 0, "total": 108}
+        ],
+        "total_wajib": {"intra": 1044, "ko": 108, "total": 1152},
+        "muatan_lokal": {"intra_min": 72, "intra_maks": 216}
+      },
+      "2": {
+        "minggu_efektif": 36, "jp_menit": 35,
+        "wajib": [
+          {"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 36, "total": 108},
+          {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Fikih", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Bahasa Arab", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Pendidikan Pancasila", "intra": 144, "ko": 36, "total": 180},
+          {"mapel": "Bahasa Indonesia", "intra": 288, "ko": 36, "total": 324},
+          {"mapel": "Matematika", "intra": 180, "ko": 0, "total": 180},
+          {"mapel": "PJOK", "intra": 108, "ko": 0, "total": 108},
+          {"mapel": "Seni dan Budaya", "intra": 108, "ko": 0, "total": 108}
+        ],
+        "total_wajib": {"intra": 1116, "ko": 108, "total": 1224},
+        "muatan_lokal": {"intra_min": 72, "intra_maks": 216}
+      },
+      "3-4": {
+        "minggu_efektif": 36, "jp_menit": 35,
+        "wajib": [
+          {"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Fikih", "intra": 72, "ko": 36, "total": 108},
+          {"mapel": "Sejarah Kebudayaan Islam", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Bahasa Arab", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Pendidikan Pancasila", "intra": 144, "ko": 0, "total": 144},
+          {"mapel": "Bahasa Indonesia", "intra": 216, "ko": 36, "total": 252},
+          {"mapel": "Matematika", "intra": 180, "ko": 0, "total": 180},
+          {"mapel": "Ilmu Pengetahuan Alam dan Sosial", "intra": 180, "ko": 36, "total": 216},
+          {"mapel": "PJOK", "intra": 108, "ko": 0, "total": 108},
+          {"mapel": "Seni dan Budaya", "intra": 108, "ko": 0, "total": 108},
+          {"mapel": "Bahasa Inggris", "intra": 72, "ko": 0, "total": 72}
+        ],
+        "total_wajib": {"intra": 1368, "ko": 108, "total": 1476},
+        "muatan_lokal": {"intra_min": 72, "intra_maks": 216}
+      },
+      "5": {
+        "minggu_efektif": 36, "jp_menit": 35,
+        "wajib": [
+          {"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Akidah Akhlak", "intra": 72, "ko": 36, "total": 108},
+          {"mapel": "Fikih", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Sejarah Kebudayaan Islam", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Bahasa Arab", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Pendidikan Pancasila", "intra": 144, "ko": 0, "total": 144},
+          {"mapel": "Bahasa Indonesia", "intra": 216, "ko": 36, "total": 252},
+          {"mapel": "Matematika", "intra": 180, "ko": 0, "total": 180},
+          {"mapel": "Ilmu Pengetahuan Alam dan Sosial", "intra": 180, "ko": 0, "total": 180},
+          {"mapel": "PJOK", "intra": 108, "ko": 0, "total": 108},
+          {"mapel": "Seni dan Budaya", "intra": 108, "ko": 36, "total": 144},
+          {"mapel": "Bahasa Inggris", "intra": 72, "ko": 0, "total": 72}
+        ],
+        "total_wajib": {"intra": 1368, "ko": 108, "total": 1476},
+        "pilihan": [
+          {"mapel": "Koding dan Kecerdasan Artifisial", "intra": 72, "maks_jp_minggu": 2},
+          {"mapel": "Muatan Lokal", "intra_min": 72, "intra_maks": 216}
+        ]
+      },
+      "6": {
+        "minggu_efektif": 32, "jp_menit": 35,
+        "wajib": [
+          {"mapel": "Al-Qur'an Hadis", "intra": 64, "ko": 0, "total": 64},
+          {"mapel": "Akidah Akhlak", "intra": 64, "ko": 32, "total": 96},
+          {"mapel": "Fikih", "intra": 64, "ko": 0, "total": 64},
+          {"mapel": "Sejarah Kebudayaan Islam", "intra": 64, "ko": 0, "total": 64},
+          {"mapel": "Bahasa Arab", "intra": 64, "ko": 0, "total": 64},
+          {"mapel": "Pendidikan Pancasila", "intra": 128, "ko": 0, "total": 128},
+          {"mapel": "Bahasa Indonesia", "intra": 192, "ko": 32, "total": 224},
+          {"mapel": "Matematika", "intra": 160, "ko": 0, "total": 160},
+          {"mapel": "Ilmu Pengetahuan Alam dan Sosial", "intra": 160, "ko": 0, "total": 160},
+          {"mapel": "PJOK", "intra": 96, "ko": 0, "total": 96},
+          {"mapel": "Seni dan Budaya", "intra": 96, "ko": 0, "total": 96},
+          {"mapel": "Bahasa Inggris", "intra": 64, "ko": 0, "total": 64}
+        ],
+        "total_wajib": {"intra": 1216, "ko": 96, "total": 1312},
+        "pilihan": [
+          {"mapel": "Koding dan Kecerdasan Artifisial", "intra": 64, "maks_jp_minggu": 2},
+          {"mapel": "Muatan Lokal", "intra_min": 64, "intra_maks": 192}
+        ]
+      }
+    }
+  },
+
+  "MTs": {
+    "nama": "Madrasah Tsanawiyah",
+    "kelas": {
+      "7": {
+        "minggu_efektif": 36, "jp_menit": 40,
+        "wajib": [
+          {"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 36, "total": 108},
+          {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Fikih", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Sejarah Kebudayaan Islam", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Bahasa Arab", "intra": 108, "ko": 0, "total": 108},
+          {"mapel": "Pendidikan Pancasila", "intra": 72, "ko": 36, "total": 108},
+          {"mapel": "Bahasa Indonesia", "intra": 180, "ko": 36, "total": 216},
+          {"mapel": "Matematika", "intra": 144, "ko": 0, "total": 144},
+          {"mapel": "Ilmu Pengetahuan Alam", "intra": 144, "ko": 0, "total": 144},
+          {"mapel": "Ilmu Pengetahuan Sosial", "intra": 108, "ko": 0, "total": 108},
+          {"mapel": "Bahasa Inggris", "intra": 108, "ko": 0, "total": 108},
+          {"mapel": "PJOK", "intra": 72, "ko": 36, "total": 108},
+          {"mapel": "Informatika", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Seni dan Budaya", "intra": 72, "ko": 0, "total": 72}
+        ],
+        "total_wajib": {"intra": 1368, "ko": 144, "total": 1512},
+        "pilihan": [
+          {"mapel": "Koding dan Kecerdasan Artifisial", "intra": 72, "maks_jp_minggu": 2},
+          {"mapel": "Muatan Lokal", "intra_min": 72, "intra_maks": 216}
+        ]
+      },
+      "8": {
+        "minggu_efektif": 36, "jp_menit": 40,
+        "wajib": [
+          {"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Fikih", "intra": 72, "ko": 36, "total": 108},
+          {"mapel": "Sejarah Kebudayaan Islam", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Bahasa Arab", "intra": 108, "ko": 0, "total": 108},
+          {"mapel": "Pendidikan Pancasila", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Bahasa Indonesia", "intra": 180, "ko": 0, "total": 180},
+          {"mapel": "Matematika", "intra": 144, "ko": 36, "total": 180},
+          {"mapel": "Ilmu Pengetahuan Alam", "intra": 144, "ko": 36, "total": 180},
+          {"mapel": "Ilmu Pengetahuan Sosial", "intra": 108, "ko": 0, "total": 108},
+          {"mapel": "Bahasa Inggris", "intra": 108, "ko": 0, "total": 108},
+          {"mapel": "PJOK", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Informatika", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Seni dan Budaya", "intra": 72, "ko": 36, "total": 108}
+        ],
+        "total_wajib": {"intra": 1368, "ko": 144, "total": 1512},
+        "pilihan": [
+          {"mapel": "Koding dan Kecerdasan Artifisial", "intra": 72, "maks_jp_minggu": 2},
+          {"mapel": "Muatan Lokal", "intra_min": 72, "intra_maks": 216}
+        ]
+      },
+      "9": {
+        "minggu_efektif": 32, "jp_menit": 40,
+        "wajib": [
+          {"mapel": "Al-Qur'an Hadis", "intra": 64, "ko": 0, "total": 64},
+          {"mapel": "Akidah Akhlak", "intra": 64, "ko": 32, "total": 96},
+          {"mapel": "Fikih", "intra": 64, "ko": 0, "total": 64},
+          {"mapel": "Sejarah Kebudayaan Islam", "intra": 64, "ko": 0, "total": 64},
+          {"mapel": "Bahasa Arab", "intra": 96, "ko": 0, "total": 96},
+          {"mapel": "Pendidikan Pancasila", "intra": 64, "ko": 0, "total": 64},
+          {"mapel": "Bahasa Indonesia", "intra": 160, "ko": 0, "total": 160},
+          {"mapel": "Matematika", "intra": 128, "ko": 0, "total": 128},
+          {"mapel": "Ilmu Pengetahuan Alam", "intra": 128, "ko": 0, "total": 128},
+          {"mapel": "Ilmu Pengetahuan Sosial", "intra": 96, "ko": 32, "total": 128},
+          {"mapel": "Bahasa Inggris", "intra": 96, "ko": 32, "total": 128},
+          {"mapel": "PJOK", "intra": 64, "ko": 0, "total": 64},
+          {"mapel": "Informatika", "intra": 64, "ko": 32, "total": 96},
+          {"mapel": "Seni dan Budaya", "intra": 64, "ko": 0, "total": 64}
+        ],
+        "total_wajib": {"intra": 1216, "ko": 128, "total": 1344},
+        "pilihan": [
+          {"mapel": "Koding dan Kecerdasan Artifisial", "intra": 64, "maks_jp_minggu": 2},
+          {"mapel": "Muatan Lokal", "intra_min": 64, "intra_maks": 192}
+        ]
+      }
+    }
+  },
+
+  "MA": {
+    "nama": "Madrasah Aliyah",
+    "kelas": {
+      "10": {
+        "minggu_efektif": 36, "jp_menit": 45,
+        "wajib": [
+          {"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 36, "total": 108},
+          {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Fikih", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Sejarah Kebudayaan Islam", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Bahasa Arab", "intra": 144, "ko": 0, "total": 144},
+          {"mapel": "Pendidikan Pancasila", "intra": 72, "ko": 36, "total": 108},
+          {"mapel": "Bahasa Indonesia", "intra": 108, "ko": 36, "total": 144},
+          {"mapel": "Matematika", "intra": 108, "ko": 0, "total": 108},
+          {"mapel": "Ilmu Pengetahuan Alam (Fisika, Kimia, Biologi)", "intra": 216, "ko": 0, "total": 216},
+          {"mapel": "Ilmu Pengetahuan Sosial (Sosiologi, Ekonomi, Sejarah, Geografi)", "intra": 288, "ko": 0, "total": 288},
+          {"mapel": "Bahasa Inggris", "intra": 108, "ko": 0, "total": 108},
+          {"mapel": "PJOK", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Informatika", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Seni, Budaya, dan Prakarya", "intra": 72, "ko": 0, "total": 72}
+        ],
+        "total_wajib": {"intra": 1548, "ko": 108, "total": 1656},
+        "pilihan": [
+          {"mapel": "Koding dan Kecerdasan Artifisial", "intra": 72, "maks_jp_minggu": 2},
+          {"mapel": "Penguatan Program (khusus MA Program Keagamaan/Akademik/Plus Keterampilan)", "intra": 216},
+          {"mapel": "Muatan Lokal", "intra_min": 72, "intra_maks": 216}
+        ],
+        "catatan": "IPA dan IPS di kelas X belum dipisah per mapel spesifik; madrasah bisa integrasikan, bergantian, atau paralel."
+      },
+      "11": {
+        "minggu_efektif": 36, "jp_menit": 45,
+        "wajib": [
+          {"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Fikih", "intra": 72, "ko": 36, "total": 108},
+          {"mapel": "Sejarah Kebudayaan Islam", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Bahasa Arab", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Pendidikan Pancasila", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Bahasa Indonesia", "intra": 108, "ko": 0, "total": 108},
+          {"mapel": "Matematika", "intra": 108, "ko": 36, "total": 144},
+          {"mapel": "Bahasa Inggris", "intra": 108, "ko": 0, "total": 108},
+          {"mapel": "PJOK", "intra": 72, "ko": 36, "total": 108},
+          {"mapel": "Sejarah", "intra": 72, "ko": 0, "total": 72},
+          {"mapel": "Seni dan Budaya", "intra": 72, "ko": 0, "total": 72}
+        ],
+        "total_wajib": {"intra": 972, "ko": 108, "total": 1080},
+        "pilihan_catatan": "Peserta didik memilih 4-5 mapel pilihan dari daftar (Ilmu Tafsir, Ilmu Hadis, Ushul Fikih, Matematika/Fisika/Kimia/Biologi/Geografi/Sejarah/Sosiologi/Ekonomi/Bahasa Indonesia/Bahasa Inggris Tingkat Lanjut, Bahasa Arab Tingkat Lanjut, Bahasa Jepang/Jerman/Korea/Mandarin/Prancis, Antropologi, Informatika, Koding dan Kecerdasan Artifisial, Prakarya dan Kewirausahaan), masing-masing 4-5 JP/minggu (144-180 JP/tahun), total pilihan 720-900 JP/tahun.",
+        "muatan_lokal": {"intra_min": 72, "intra_maks": 216}
+      },
+      "12": {
+        "minggu_efektif": 32, "jp_menit": 45,
+        "wajib": [
+          {"mapel": "Al-Qur'an Hadis", "intra": 64, "ko": 0, "total": 64},
+          {"mapel": "Akidah Akhlak", "intra": 64, "ko": 32, "total": 96},
+          {"mapel": "Fikih", "intra": 64, "ko": 0, "total": 64},
+          {"mapel": "Sejarah Kebudayaan Islam", "intra": 64, "ko": 0, "total": 64},
+          {"mapel": "Bahasa Arab", "intra": 64, "ko": 0, "total": 64},
+          {"mapel": "Pendidikan Pancasila", "intra": 64, "ko": 0, "total": 64},
+          {"mapel": "Bahasa Indonesia", "intra": 96, "ko": 0, "total": 96},
+          {"mapel": "Matematika", "intra": 96, "ko": 32, "total": 128},
+          {"mapel": "Bahasa Inggris", "intra": 96, "ko": 0, "total": 96},
+          {"mapel": "PJOK", "intra": 48, "ko": 16, "total": 64},
+          {"mapel": "Sejarah", "intra": 64, "ko": 0, "total": 64},
+          {"mapel": "Seni dan Budaya", "intra": 48, "ko": 16, "total": 64}
+        ],
+        "total_wajib": {"intra": 832, "ko": 96, "total": 928},
+        "pilihan_catatan": "Sama seperti kelas XI, masing-masing pilihan 5 JP/minggu (160 JP/tahun), total pilihan 640-800 JP/tahun.",
+        "muatan_lokal": {"intra_min": 64, "intra_maks": 192}
+      }
+    }
+  },
+
+  "catatan_umum": {
+    "muatan_lokal_kategori": ["keagamaan", "seni budaya", "prakarya", "PJOK", "bahasa", "teknologi", "riset"],
+    "kokurikuler": "Dilaksanakan serentak di MI, MTs, MA. Tim terdiri koordinator (setara 2 jam tatap muka/rombel/tahun, min 24 jam tatap muka/minggu, maks 3 rombel) dan fasilitator (guru mapel yang alokasi ko-nya dialihkan, setara 1 JP/rombel).",
+    "penambahan_jam": "Madrasah dapat menambah jam pelajaran sesuai hasil analisis capaian pembelajaran, paling banyak 6 JP/minggu.",
+    "masa_transisi": {
+      "kurikulum_2013": "Madrasah yang belum menerapkan Kurikulum Merdeka boleh pakai Kurikulum 2013 sampai TA 2025/2026 (2026/2027 untuk daerah 3T), wajib pindah ke Kurikulum Merdeka paling lambat TA 2026/2027 (2027/2028 untuk 3T).",
+      "bahasa_inggris_MI": "Masih mata pelajaran pilihan sampai TA 2026/2027, menjadi wajib mulai TA 2027/2028.",
+      "koding_ai": "Mata pelajaran pilihan, diselenggarakan bertahap sesuai kesiapan madrasah mulai TA 2025/2026."
+    }
+  }
+}
