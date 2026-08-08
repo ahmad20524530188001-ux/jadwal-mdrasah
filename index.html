@@ -2,175 +2,467 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Preview Struktur Kurikulum Madrasah — KMA 1503/2025</title>
+<title>Jadwal Madrasah — Anti Bentrok</title>
 <style>
   :root{
     --bg:#f6f5f1; --card:#ffffff; --ink:#1f2421; --muted:#6b7269;
-    --accent:#0f6a4f; --accent-soft:#e6f2ec; --line:#e4e1d8; --warn:#a15c00;
+    --accent:#0f6a4f; --accent-soft:#e6f2ec; --line:#e4e1d8;
+    --danger:#b3261e; --danger-soft:#fbe9e7; --warn:#8a5a00; --warn-soft:#fff3d6;
+    --istirahat-bg:#f0efe9;
   }
   *{box-sizing:border-box;}
-  body{
-    margin:0; font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
-    background:var(--bg); color:var(--ink); padding:24px 16px 60px;
+  body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);}
+  .topbar{background:var(--card);border-bottom:1px solid var(--line);padding:14px 20px;position:sticky;top:0;z-index:40;}
+  .topbar h1{font-size:1.15rem;margin:0 0 10px;}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;}
+  .tab-btn{
+    padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--muted);
+    font-size:.85rem;cursor:pointer;font-weight:600;
   }
-  .wrap{max-width:920px;margin:0 auto;}
-  h1{font-size:1.4rem;margin:0 0 4px;}
+  .tab-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .content{max-width:1100px;margin:0 auto;padding:20px 16px 60px;}
+  .panel{display:none;}
+  .panel.active{display:block;}
   .sub{color:var(--muted);font-size:.85rem;margin-bottom:20px;}
+
   .controls{
-    display:flex; gap:12px; flex-wrap:wrap; background:var(--card);
-    padding:16px; border-radius:12px; border:1px solid var(--line);
-    margin-bottom:20px;
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px;
+    background:var(--card); padding:18px; border-radius:12px; border:1px solid var(--line);
+    margin-bottom:18px; align-items:end;
   }
-  .field{display:flex;flex-direction:column;gap:4px;flex:1;min-width:140px;}
-  label{font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;}
-  select{
-    padding:8px 10px;border-radius:8px;border:1px solid var(--line);
-    font-size:.95rem;background:#fff;color:var(--ink);
+  .field{display:flex;flex-direction:column;gap:4px;}
+  label{font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;}
+  select,input{padding:8px 10px;border-radius:8px;border:1px solid var(--line);font-size:.92rem;background:#fff;color:var(--ink);}
+  .btn{
+    background:var(--accent);color:#fff;border:none;padding:9px 16px;border-radius:8px;
+    font-size:.9rem;cursor:pointer;font-weight:600;height:38px;
   }
-  .card{
-    background:var(--card);border:1px solid var(--line);border-radius:12px;
-    padding:18px 20px;margin-bottom:16px;
-  }
-  .card h2{margin:0 0 2px;font-size:1.05rem;}
+  .btn.danger{background:#fff;color:var(--danger);border:1px solid var(--danger);padding:5px 10px;font-size:.78rem;height:auto;}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:16px;}
+  .card h2,.card h3{margin:0 0 8px;}
   .meta-row{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:.8rem;margin-bottom:14px;}
-  table{width:100%;border-collapse:collapse;font-size:.88rem;}
-  th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);}
-  th{color:var(--muted);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.02em;}
+
+  table{width:100%;border-collapse:collapse;font-size:.85rem;}
+  th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);}
+  th{color:var(--muted);font-weight:600;font-size:.72rem;text-transform:uppercase;}
   td.num{text-align:right;font-variant-numeric:tabular-nums;}
   tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom:none;}
-  .badge{
-    display:inline-block;background:var(--accent-soft);color:var(--accent);
-    font-size:.72rem;font-weight:600;padding:2px 8px;border-radius:999px;margin-left:6px;
-  }
-  .pilihan-box{
-    background:#fbfaf5;border:1px dashed var(--line);border-radius:10px;
-    padding:12px 14px;margin-top:10px;font-size:.85rem;color:var(--ink);
-  }
-  .pilihan-box b{color:var(--accent);}
+
+  .badge{display:inline-block;background:var(--accent-soft);color:var(--accent);font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:999px;}
+  .badge.over{background:var(--danger-soft);color:var(--danger);}
+
+  .pilihan-box{background:#fbfaf5;border:1px dashed var(--line);border-radius:10px;padding:10px 12px;margin-top:8px;font-size:.82rem;}
   .note{font-size:.8rem;color:var(--muted);margin-top:6px;font-style:italic;}
-  .footer-note{
-    background:#fff8ec;border:1px solid #f0dfb8;color:var(--warn);
-    border-radius:10px;padding:12px 14px;font-size:.82rem;margin-top:24px;
-  }
-  .jp-per-minggu{color:var(--accent);font-weight:600;}
+  .empty{color:var(--muted);font-size:.9rem;text-align:center;padding:30px;background:var(--card);border:1px dashed var(--line);border-radius:12px;}
+
+  /* model jam */
+  .day-toggles{display:flex;gap:6px;flex-wrap:wrap;grid-column:1/-1;}
+  .day-chip{padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:.8rem;cursor:pointer;user-select:none;}
+  .day-chip.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .day-jp{grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;}
+  .day-jp .field{width:110px;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;}
+  tr.istirahat td{background:var(--istirahat-bg);color:var(--warn);font-weight:600;font-size:.75rem;}
+  td.jam{white-space:nowrap;color:var(--muted);font-variant-numeric:tabular-nums;}
+
+  /* jadwal grid */
+  table.grid-table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:.82rem;}
+  table.grid-table th{background:#faf9f5;padding:8px;text-align:center;border-bottom:1px solid var(--line);font-size:.78rem;color:var(--muted);}
+  table.grid-table td{border:1px solid var(--line);padding:0;vertical-align:top;}
+  .jam-cell{padding:6px 8px;color:var(--muted);font-size:.72rem;white-space:nowrap;background:#faf9f5;}
+  .slot-cell{padding:6px 8px;min-height:44px;min-width:110px;cursor:pointer;}
+  .slot-cell:hover{background:var(--accent-soft);}
+  .slot-cell.filled{background:#eef7f2;font-weight:600;color:var(--accent);}
+  .slot-cell.istirahat-row{background:var(--istirahat-bg);color:var(--muted);font-size:.72rem;text-align:center;cursor:default;}
+  .picker{position:fixed;z-index:50;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.15);padding:8px;min-width:220px;max-height:300px;overflow-y:auto;}
+  .picker-item{padding:7px 10px;border-radius:6px;cursor:pointer;font-size:.85rem;}
+  .picker-item:hover{background:var(--accent-soft);}
+  .picker-item.clear{color:var(--danger);border-top:1px solid var(--line);margin-top:4px;}
+
+  .progress-wrap{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:16px;}
+  .progress-row{display:flex;align-items:center;gap:10px;font-size:.82rem;padding:4px 0;}
+  .progress-row .nama{flex:0 0 220px;}
+  .progress-bar{flex:1;height:8px;background:#eee;border-radius:99px;overflow:hidden;}
+  .progress-bar-fill{height:100%;background:var(--accent);}
+  .progress-bar-fill.over{background:var(--danger);}
+  .progress-count{flex:0 0 70px;text-align:right;font-variant-numeric:tabular-nums;color:var(--muted);}
+  .progress-count.over{color:var(--danger);font-weight:700;}
+  .progress-count.done{color:var(--accent);font-weight:700;}
+  .toolbar{display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap;}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>Struktur Kurikulum Madrasah <span class="badge">KMA 1503/2025</span></h1>
-  <div class="sub">Preview interaktif — pilih jenjang dan kelas untuk melihat daftar mata pelajaran, alokasi JP, dan mapel pilihan.</div>
 
-  <div class="controls">
-    <div class="field">
-      <label for="jenjang">Jenjang</label>
-      <select id="jenjang"></select>
-    </div>
-    <div class="field">
-      <label for="kelas">Kelas</label>
-      <select id="kelas"></select>
-    </div>
-  </div>
-
-  <div id="output"></div>
-
-  <div class="footer-note">
-    ⚠️ Data diambil dari dokumen resmi KMA 1503/2025 yang diunggah pengguna. Angka bisa saja meleset karena keterbatasan pembacaan PDF — mohon dicek ulang terhadap dokumen asli sebelum dipakai untuk keperluan resmi.
+<div class="topbar">
+  <h1>Jadwal Madrasah — Anti Bentrok</h1>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="kurikulum">1. Kurikulum</button>
+    <button class="tab-btn" data-tab="jam">2. Model Jam</button>
+    <button class="tab-btn" data-tab="rombel">3. Buat Rombel</button>
+    <button class="tab-btn" data-tab="jadwal">4. Jadwal</button>
   </div>
 </div>
 
+<div class="content">
+
+  <!-- PANEL 1: KURIKULUM -->
+  <div class="panel active" id="panel-kurikulum">
+    <div class="sub">Preview struktur mata pelajaran & JP berdasarkan KMA 1503/2025.</div>
+    <div class="controls">
+      <div class="field"><label>Jenjang</label><select id="k_jenjang"></select></div>
+      <div class="field"><label>Kelas</label><select id="k_kelas"></select></div>
+    </div>
+    <div id="kurikulumOutput"></div>
+  </div>
+
+  <!-- PANEL 2: MODEL JAM -->
+  <div class="panel" id="panel-jam">
+    <div class="sub">Atur jam mulai, durasi JP, dan istirahat — hasilnya jadi slot untuk jadwal.</div>
+    <div class="controls">
+      <div class="field"><label>Jam Mulai</label><input type="time" id="jamMulai" value="07:00"></div>
+      <div class="field">
+        <label>Jenjang (durasi 1 JP)</label>
+        <select id="jenjangJam">
+          <option value="35">MI — 35 menit</option>
+          <option value="40" selected>MTs — 40 menit</option>
+          <option value="45">MA — 45 menit</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Jumlah Istirahat</label>
+        <select id="jumlahIstirahat">
+          <option value="1">1 kali istirahat</option>
+          <option value="2">2 kali istirahat</option>
+        </select>
+      </div>
+      <div class="field"><label>Durasi Istirahat 1 (menit)</label><input type="number" id="durasiIstirahat1" value="20" min="5" max="60"></div>
+      <div class="field"><label>Istirahat 1 setelah JP ke-</label><input type="number" id="posisiIstirahat1" value="4" min="1" max="14"></div>
+      <div class="field" id="fieldDurasiIstirahat2" style="display:none;"><label>Durasi Istirahat 2 (menit)</label><input type="number" id="durasiIstirahat2" value="15" min="5" max="60"></div>
+      <div class="field" id="fieldPosisiIstirahat2" style="display:none;"><label>Istirahat 2 setelah JP ke-</label><input type="number" id="posisiIstirahat2" value="7" min="1" max="14"></div>
+
+      <div class="day-toggles">
+        <label style="width:100%;">Hari Aktif</label>
+        <div class="day-chip active" data-day="Senin">Senin</div>
+        <div class="day-chip active" data-day="Selasa">Selasa</div>
+        <div class="day-chip active" data-day="Rabu">Rabu</div>
+        <div class="day-chip active" data-day="Kamis">Kamis</div>
+        <div class="day-chip active" data-day="Jumat">Jumat</div>
+        <div class="day-chip active" data-day="Sabtu">Sabtu</div>
+        <div class="day-chip" data-day="Minggu">Minggu</div>
+      </div>
+      <div class="day-jp" id="dayJpInputs"></div>
+      <div style="grid-column:1/-1;"><button class="btn" id="btnGenerate">Generate Slot</button></div>
+    </div>
+    <div class="grid" id="jamOutput"></div>
+  </div>
+
+  <!-- PANEL 3: ROMBEL -->
+  <div class="panel" id="panel-rombel">
+    <div class="sub">Pilih jenjang & kelas → sistem otomatis ambil mapel & JP dari kurikulum.</div>
+    <div class="controls">
+      <div class="field"><label>Nama Rombel</label><input type="text" id="namaRombel" placeholder="misal: 7A"></div>
+      <div class="field"><label>Jenjang</label><select id="r_jenjang"></select></div>
+      <div class="field"><label>Kelas</label><select id="r_kelas"></select></div>
+      <div class="field"><label>Kapasitas Slot/Minggu (opsional)</label><input type="number" id="kapasitas" placeholder="misal: 44" min="1"></div>
+      <button class="btn" id="btnTambahRombel">+ Tambah Rombel</button>
+    </div>
+    <div id="rombelList"></div>
+  </div>
+
+  <!-- PANEL 4: JADWAL -->
+  <div class="panel" id="panel-jadwal">
+    <div class="sub">Klik slot kosong untuk isi mapel. Progress JP dilacak otomatis.</div>
+    <div id="jadwalArea"></div>
+  </div>
+
+</div>
+
 <script>
-const DATA = {"_meta": {"sumber": "Keputusan Menteri Agama RI Nomor 1503 Tahun 2025 tentang Perubahan atas KMA Nomor 450 Tahun 2024 tentang Pedoman Implementasi Kurikulum pada RA, MI, MTs, MA, dan MAK", "catatan": "Alokasi dalam satuan JP per tahun. Untuk JP per minggu = total JP per tahun / minggu_efektif. 1 JP mata pelajaran wajib berbeda durasi menitnya per jenjang (lihat field jp_menit tiap kelas).", "struktur_field": {"intra": "Alokasi Intrakurikuler per tahun (JP)", "ko": "Alokasi Kokurikuler per tahun (JP)", "total": "Total JP per tahun (intra + ko)"}}, "MI": {"nama": "Madrasah Ibtidaiyah", "kelas": {"1": {"minggu_efektif": 36, "jp_menit": 35, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Fikih", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Arab", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Pendidikan Pancasila", "intra": 144, "ko": 36, "total": 180}, {"mapel": "Bahasa Indonesia", "intra": 252, "ko": 36, "total": 288}, {"mapel": "Matematika", "intra": 144, "ko": 0, "total": 144}, {"mapel": "PJOK", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Seni dan Budaya", "intra": 108, "ko": 0, "total": 108}], "total_wajib": {"intra": 1044, "ko": 108, "total": 1152}, "muatan_lokal": {"intra_min": 72, "intra_maks": 216}}, "2": {"minggu_efektif": 36, "jp_menit": 35, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Fikih", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Arab", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Pendidikan Pancasila", "intra": 144, "ko": 36, "total": 180}, {"mapel": "Bahasa Indonesia", "intra": 288, "ko": 36, "total": 324}, {"mapel": "Matematika", "intra": 180, "ko": 0, "total": 180}, {"mapel": "PJOK", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Seni dan Budaya", "intra": 108, "ko": 0, "total": 108}], "total_wajib": {"intra": 1116, "ko": 108, "total": 1224}, "muatan_lokal": {"intra_min": 72, "intra_maks": 216}}, "3-4": {"minggu_efektif": 36, "jp_menit": 35, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Fikih", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Sejarah Kebudayaan Islam", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Arab", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Pendidikan Pancasila", "intra": 144, "ko": 0, "total": 144}, {"mapel": "Bahasa Indonesia", "intra": 216, "ko": 36, "total": 252}, {"mapel": "Matematika", "intra": 180, "ko": 0, "total": 180}, {"mapel": "Ilmu Pengetahuan Alam dan Sosial", "intra": 180, "ko": 36, "total": 216}, {"mapel": "PJOK", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Seni dan Budaya", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Bahasa Inggris", "intra": 72, "ko": 0, "total": 72}], "total_wajib": {"intra": 1368, "ko": 108, "total": 1476}, "muatan_lokal": {"intra_min": 72, "intra_maks": 216}}, "5": {"minggu_efektif": 36, "jp_menit": 35, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Akidah Akhlak", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Fikih", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Sejarah Kebudayaan Islam", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Arab", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Pendidikan Pancasila", "intra": 144, "ko": 0, "total": 144}, {"mapel": "Bahasa Indonesia", "intra": 216, "ko": 36, "total": 252}, {"mapel": "Matematika", "intra": 180, "ko": 0, "total": 180}, {"mapel": "Ilmu Pengetahuan Alam dan Sosial", "intra": 180, "ko": 0, "total": 180}, {"mapel": "PJOK", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Seni dan Budaya", "intra": 108, "ko": 36, "total": 144}, {"mapel": "Bahasa Inggris", "intra": 72, "ko": 0, "total": 72}], "total_wajib": {"intra": 1368, "ko": 108, "total": 1476}, "pilihan": [{"mapel": "Koding dan Kecerdasan Artifisial", "intra": 72, "maks_jp_minggu": 2}, {"mapel": "Muatan Lokal", "intra_min": 72, "intra_maks": 216}]}, "6": {"minggu_efektif": 32, "jp_menit": 35, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Akidah Akhlak", "intra": 64, "ko": 32, "total": 96}, {"mapel": "Fikih", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Sejarah Kebudayaan Islam", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Bahasa Arab", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Pendidikan Pancasila", "intra": 128, "ko": 0, "total": 128}, {"mapel": "Bahasa Indonesia", "intra": 192, "ko": 32, "total": 224}, {"mapel": "Matematika", "intra": 160, "ko": 0, "total": 160}, {"mapel": "Ilmu Pengetahuan Alam dan Sosial", "intra": 160, "ko": 0, "total": 160}, {"mapel": "PJOK", "intra": 96, "ko": 0, "total": 96}, {"mapel": "Seni dan Budaya", "intra": 96, "ko": 0, "total": 96}, {"mapel": "Bahasa Inggris", "intra": 64, "ko": 0, "total": 64}], "total_wajib": {"intra": 1216, "ko": 96, "total": 1312}, "pilihan": [{"mapel": "Koding dan Kecerdasan Artifisial", "intra": 64, "maks_jp_minggu": 2}, {"mapel": "Muatan Lokal", "intra_min": 64, "intra_maks": 192}]}}}, "MTs": {"nama": "Madrasah Tsanawiyah", "kelas": {"7": {"minggu_efektif": 36, "jp_menit": 40, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Fikih", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Sejarah Kebudayaan Islam", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Arab", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Pendidikan Pancasila", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Bahasa Indonesia", "intra": 180, "ko": 36, "total": 216}, {"mapel": "Matematika", "intra": 144, "ko": 0, "total": 144}, {"mapel": "Ilmu Pengetahuan Alam", "intra": 144, "ko": 0, "total": 144}, {"mapel": "Ilmu Pengetahuan Sosial", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Bahasa Inggris", "intra": 108, "ko": 0, "total": 108}, {"mapel": "PJOK", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Informatika", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Seni dan Budaya", "intra": 72, "ko": 0, "total": 72}], "total_wajib": {"intra": 1368, "ko": 144, "total": 1512}, "pilihan": [{"mapel": "Koding dan Kecerdasan Artifisial", "intra": 72, "maks_jp_minggu": 2}, {"mapel": "Muatan Lokal", "intra_min": 72, "intra_maks": 216}]}, "8": {"minggu_efektif": 36, "jp_menit": 40, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Fikih", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Sejarah Kebudayaan Islam", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Arab", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Pendidikan Pancasila", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Indonesia", "intra": 180, "ko": 0, "total": 180}, {"mapel": "Matematika", "intra": 144, "ko": 36, "total": 180}, {"mapel": "Ilmu Pengetahuan Alam", "intra": 144, "ko": 36, "total": 180}, {"mapel": "Ilmu Pengetahuan Sosial", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Bahasa Inggris", "intra": 108, "ko": 0, "total": 108}, {"mapel": "PJOK", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Informatika", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Seni dan Budaya", "intra": 72, "ko": 36, "total": 108}], "total_wajib": {"intra": 1368, "ko": 144, "total": 1512}, "pilihan": [{"mapel": "Koding dan Kecerdasan Artifisial", "intra": 72, "maks_jp_minggu": 2}, {"mapel": "Muatan Lokal", "intra_min": 72, "intra_maks": 216}]}, "9": {"minggu_efektif": 32, "jp_menit": 40, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Akidah Akhlak", "intra": 64, "ko": 32, "total": 96}, {"mapel": "Fikih", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Sejarah Kebudayaan Islam", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Bahasa Arab", "intra": 96, "ko": 0, "total": 96}, {"mapel": "Pendidikan Pancasila", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Bahasa Indonesia", "intra": 160, "ko": 0, "total": 160}, {"mapel": "Matematika", "intra": 128, "ko": 0, "total": 128}, {"mapel": "Ilmu Pengetahuan Alam", "intra": 128, "ko": 0, "total": 128}, {"mapel": "Ilmu Pengetahuan Sosial", "intra": 96, "ko": 32, "total": 128}, {"mapel": "Bahasa Inggris", "intra": 96, "ko": 32, "total": 128}, {"mapel": "PJOK", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Informatika", "intra": 64, "ko": 32, "total": 96}, {"mapel": "Seni dan Budaya", "intra": 64, "ko": 0, "total": 64}], "total_wajib": {"intra": 1216, "ko": 128, "total": 1344}, "pilihan": [{"mapel": "Koding dan Kecerdasan Artifisial", "intra": 64, "maks_jp_minggu": 2}, {"mapel": "Muatan Lokal", "intra_min": 64, "intra_maks": 192}]}}}, "MA": {"nama": "Madrasah Aliyah", "kelas": {"10": {"minggu_efektif": 36, "jp_menit": 45, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Fikih", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Sejarah Kebudayaan Islam", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Arab", "intra": 144, "ko": 0, "total": 144}, {"mapel": "Pendidikan Pancasila", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Bahasa Indonesia", "intra": 108, "ko": 36, "total": 144}, {"mapel": "Matematika", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Ilmu Pengetahuan Alam (Fisika, Kimia, Biologi)", "intra": 216, "ko": 0, "total": 216}, {"mapel": "Ilmu Pengetahuan Sosial (Sosiologi, Ekonomi, Sejarah, Geografi)", "intra": 288, "ko": 0, "total": 288}, {"mapel": "Bahasa Inggris", "intra": 108, "ko": 0, "total": 108}, {"mapel": "PJOK", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Informatika", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Seni, Budaya, dan Prakarya", "intra": 72, "ko": 0, "total": 72}], "total_wajib": {"intra": 1548, "ko": 108, "total": 1656}, "pilihan": [{"mapel": "Koding dan Kecerdasan Artifisial", "intra": 72, "maks_jp_minggu": 2}, {"mapel": "Penguatan Program (khusus MA Program Keagamaan/Akademik/Plus Keterampilan)", "intra": 216}, {"mapel": "Muatan Lokal", "intra_min": 72, "intra_maks": 216}], "catatan": "IPA dan IPS di kelas X belum dipisah per mapel spesifik; madrasah bisa integrasikan, bergantian, atau paralel."}, "11": {"minggu_efektif": 36, "jp_menit": 45, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Fikih", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Sejarah Kebudayaan Islam", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Arab", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Pendidikan Pancasila", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Indonesia", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Matematika", "intra": 108, "ko": 36, "total": 144}, {"mapel": "Bahasa Inggris", "intra": 108, "ko": 0, "total": 108}, {"mapel": "PJOK", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Sejarah", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Seni dan Budaya", "intra": 72, "ko": 0, "total": 72}], "total_wajib": {"intra": 972, "ko": 108, "total": 1080}, "pilihan_catatan": "Peserta didik memilih 4-5 mapel pilihan dari daftar (Ilmu Tafsir, Ilmu Hadis, Ushul Fikih, Matematika/Fisika/Kimia/Biologi/Geografi/Sejarah/Sosiologi/Ekonomi/Bahasa Indonesia/Bahasa Inggris Tingkat Lanjut, Bahasa Arab Tingkat Lanjut, Bahasa Jepang/Jerman/Korea/Mandarin/Prancis, Antropologi, Informatika, Koding dan Kecerdasan Artifisial, Prakarya dan Kewirausahaan), masing-masing 4-5 JP/minggu (144-180 JP/tahun), total pilihan 720-900 JP/tahun.", "muatan_lokal": {"intra_min": 72, "intra_maks": 216}}, "12": {"minggu_efektif": 32, "jp_menit": 45, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Akidah Akhlak", "intra": 64, "ko": 32, "total": 96}, {"mapel": "Fikih", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Sejarah Kebudayaan Islam", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Bahasa Arab", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Pendidikan Pancasila", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Bahasa Indonesia", "intra": 96, "ko": 0, "total": 96}, {"mapel": "Matematika", "intra": 96, "ko": 32, "total": 128}, {"mapel": "Bahasa Inggris", "intra": 96, "ko": 0, "total": 96}, {"mapel": "PJOK", "intra": 48, "ko": 16, "total": 64}, {"mapel": "Sejarah", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Seni dan Budaya", "intra": 48, "ko": 16, "total": 64}], "total_wajib": {"intra": 832, "ko": 96, "total": 928}, "pilihan_catatan": "Sama seperti kelas XI, masing-masing pilihan 5 JP/minggu (160 JP/tahun), total pilihan 640-800 JP/tahun.", "muatan_lokal": {"intra_min": 64, "intra_maks": 192}}}}, "catatan_umum": {"muatan_lokal_kategori": ["keagamaan", "seni budaya", "prakarya", "PJOK", "bahasa", "teknologi", "riset"], "kokurikuler": "Dilaksanakan serentak di MI, MTs, MA. Tim terdiri koordinator (setara 2 jam tatap muka/rombel/tahun, min 24 jam tatap muka/minggu, maks 3 rombel) dan fasilitator (guru mapel yang alokasi ko-nya dialihkan, setara 1 JP/rombel).", "penambahan_jam": "Madrasah dapat menambah jam pelajaran sesuai hasil analisis capaian pembelajaran, paling banyak 6 JP/minggu.", "masa_transisi": {"kurikulum_2013": "Madrasah yang belum menerapkan Kurikulum Merdeka boleh pakai Kurikulum 2013 sampai TA 2025/2026 (2026/2027 untuk daerah 3T), wajib pindah ke Kurikulum Merdeka paling lambat TA 2026/2027 (2027/2028 untuk 3T).", "bahasa_inggris_MI": "Masih mata pelajaran pilihan sampai TA 2026/2027, menjadi wajib mulai TA 2027/2028.", "koding_ai": "Mata pelajaran pilihan, diselenggarakan bertahap sesuai kesiapan madrasah mulai TA 2025/2026."}}};
+/* ============ DATA KURIKULUM (KMA 1503/2025) ============ */
+const KURIKULUM = {"MI": {"nama": "Madrasah Ibtidaiyah", "kelas": {"1": {"minggu_efektif": 36, "jp_menit": 35, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Fikih", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Arab", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Pendidikan Pancasila", "intra": 144, "ko": 36, "total": 180}, {"mapel": "Bahasa Indonesia", "intra": 252, "ko": 36, "total": 288}, {"mapel": "Matematika", "intra": 144, "ko": 0, "total": 144}, {"mapel": "PJOK", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Seni dan Budaya", "intra": 108, "ko": 0, "total": 108}], "total_wajib": {"intra": 1044, "ko": 108, "total": 1152}}, "2": {"minggu_efektif": 36, "jp_menit": 35, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Fikih", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Arab", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Pendidikan Pancasila", "intra": 144, "ko": 36, "total": 180}, {"mapel": "Bahasa Indonesia", "intra": 288, "ko": 36, "total": 324}, {"mapel": "Matematika", "intra": 180, "ko": 0, "total": 180}, {"mapel": "PJOK", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Seni dan Budaya", "intra": 108, "ko": 0, "total": 108}], "total_wajib": {"intra": 1116, "ko": 108, "total": 1224}}, "3-4": {"minggu_efektif": 36, "jp_menit": 35, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Fikih", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Sejarah Kebudayaan Islam", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Arab", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Pendidikan Pancasila", "intra": 144, "ko": 0, "total": 144}, {"mapel": "Bahasa Indonesia", "intra": 216, "ko": 36, "total": 252}, {"mapel": "Matematika", "intra": 180, "ko": 0, "total": 180}, {"mapel": "Ilmu Pengetahuan Alam dan Sosial", "intra": 180, "ko": 36, "total": 216}, {"mapel": "PJOK", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Seni dan Budaya", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Bahasa Inggris", "intra": 72, "ko": 0, "total": 72}], "total_wajib": {"intra": 1368, "ko": 108, "total": 1476}}, "5": {"minggu_efektif": 36, "jp_menit": 35, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Akidah Akhlak", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Fikih", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Sejarah Kebudayaan Islam", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Arab", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Pendidikan Pancasila", "intra": 144, "ko": 0, "total": 144}, {"mapel": "Bahasa Indonesia", "intra": 216, "ko": 36, "total": 252}, {"mapel": "Matematika", "intra": 180, "ko": 0, "total": 180}, {"mapel": "Ilmu Pengetahuan Alam dan Sosial", "intra": 180, "ko": 0, "total": 180}, {"mapel": "PJOK", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Seni dan Budaya", "intra": 108, "ko": 36, "total": 144}, {"mapel": "Bahasa Inggris", "intra": 72, "ko": 0, "total": 72}], "total_wajib": {"intra": 1368, "ko": 108, "total": 1476}}, "6": {"minggu_efektif": 32, "jp_menit": 35, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Akidah Akhlak", "intra": 64, "ko": 32, "total": 96}, {"mapel": "Fikih", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Sejarah Kebudayaan Islam", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Bahasa Arab", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Pendidikan Pancasila", "intra": 128, "ko": 0, "total": 128}, {"mapel": "Bahasa Indonesia", "intra": 192, "ko": 32, "total": 224}, {"mapel": "Matematika", "intra": 160, "ko": 0, "total": 160}, {"mapel": "Ilmu Pengetahuan Alam dan Sosial", "intra": 160, "ko": 0, "total": 160}, {"mapel": "PJOK", "intra": 96, "ko": 0, "total": 96}, {"mapel": "Seni dan Budaya", "intra": 96, "ko": 0, "total": 96}, {"mapel": "Bahasa Inggris", "intra": 64, "ko": 0, "total": 64}], "total_wajib": {"intra": 1216, "ko": 96, "total": 1312}}}}, "MTs": {"nama": "Madrasah Tsanawiyah", "kelas": {"7": {"minggu_efektif": 36, "jp_menit": 40, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Fikih", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Sejarah Kebudayaan Islam", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Arab", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Pendidikan Pancasila", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Bahasa Indonesia", "intra": 180, "ko": 36, "total": 216}, {"mapel": "Matematika", "intra": 144, "ko": 0, "total": 144}, {"mapel": "Ilmu Pengetahuan Alam", "intra": 144, "ko": 0, "total": 144}, {"mapel": "Ilmu Pengetahuan Sosial", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Bahasa Inggris", "intra": 108, "ko": 0, "total": 108}, {"mapel": "PJOK", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Informatika", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Seni dan Budaya", "intra": 72, "ko": 0, "total": 72}], "total_wajib": {"intra": 1368, "ko": 144, "total": 1512}}, "8": {"minggu_efektif": 36, "jp_menit": 40, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Fikih", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Sejarah Kebudayaan Islam", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Arab", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Pendidikan Pancasila", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Indonesia", "intra": 180, "ko": 0, "total": 180}, {"mapel": "Matematika", "intra": 144, "ko": 36, "total": 180}, {"mapel": "Ilmu Pengetahuan Alam", "intra": 144, "ko": 36, "total": 180}, {"mapel": "Ilmu Pengetahuan Sosial", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Bahasa Inggris", "intra": 108, "ko": 0, "total": 108}, {"mapel": "PJOK", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Informatika", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Seni dan Budaya", "intra": 72, "ko": 36, "total": 108}], "total_wajib": {"intra": 1368, "ko": 144, "total": 1512}}, "9": {"minggu_efektif": 32, "jp_menit": 40, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Akidah Akhlak", "intra": 64, "ko": 32, "total": 96}, {"mapel": "Fikih", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Sejarah Kebudayaan Islam", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Bahasa Arab", "intra": 96, "ko": 0, "total": 96}, {"mapel": "Pendidikan Pancasila", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Bahasa Indonesia", "intra": 160, "ko": 0, "total": 160}, {"mapel": "Matematika", "intra": 128, "ko": 0, "total": 128}, {"mapel": "Ilmu Pengetahuan Alam", "intra": 128, "ko": 0, "total": 128}, {"mapel": "Ilmu Pengetahuan Sosial", "intra": 96, "ko": 32, "total": 128}, {"mapel": "Bahasa Inggris", "intra": 96, "ko": 32, "total": 128}, {"mapel": "PJOK", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Informatika", "intra": 64, "ko": 32, "total": 96}, {"mapel": "Seni dan Budaya", "intra": 64, "ko": 0, "total": 64}], "total_wajib": {"intra": 1216, "ko": 128, "total": 1344}}}}, "MA": {"nama": "Madrasah Aliyah", "kelas": {"10": {"minggu_efektif": 36, "jp_menit": 45, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Fikih", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Sejarah Kebudayaan Islam", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Arab", "intra": 144, "ko": 0, "total": 144}, {"mapel": "Pendidikan Pancasila", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Bahasa Indonesia", "intra": 108, "ko": 36, "total": 144}, {"mapel": "Matematika", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Ilmu Pengetahuan Alam (Fisika, Kimia, Biologi)", "intra": 216, "ko": 0, "total": 216}, {"mapel": "Ilmu Pengetahuan Sosial (Sosiologi, Ekonomi, Sejarah, Geografi)", "intra": 288, "ko": 0, "total": 288}, {"mapel": "Bahasa Inggris", "intra": 108, "ko": 0, "total": 108}, {"mapel": "PJOK", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Informatika", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Seni, Budaya, dan Prakarya", "intra": 72, "ko": 0, "total": 72}], "total_wajib": {"intra": 1548, "ko": 108, "total": 1656}}, "11": {"minggu_efektif": 36, "jp_menit": 45, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Fikih", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Sejarah Kebudayaan Islam", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Arab", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Pendidikan Pancasila", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Indonesia", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Matematika", "intra": 108, "ko": 36, "total": 144}, {"mapel": "Bahasa Inggris", "intra": 108, "ko": 0, "total": 108}, {"mapel": "PJOK", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Sejarah", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Seni dan Budaya", "intra": 72, "ko": 0, "total": 72}], "total_wajib": {"intra": 972, "ko": 108, "total": 1080}}, "12": {"minggu_efektif": 32, "jp_menit": 45, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Akidah Akhlak", "intra": 64, "ko": 32, "total": 96}, {"mapel": "Fikih", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Sejarah Kebudayaan Islam", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Bahasa Arab", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Pendidikan Pancasila", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Bahasa Indonesia", "intra": 96, "ko": 0, "total": 96}, {"mapel": "Matematika", "intra": 96, "ko": 32, "total": 128}, {"mapel": "Bahasa Inggris", "intra": 96, "ko": 0, "total": 96}, {"mapel": "PJOK", "intra": 48, "ko": 16, "total": 64}, {"mapel": "Sejarah", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Seni dan Budaya", "intra": 48, "ko": 16, "total": 64}], "total_wajib": {"intra": 832, "ko": 96, "total": 928}}}}};
 
-const jenjangSel = document.getElementById('jenjang');
-const kelasSel = document.getElementById('kelas');
-const output = document.getElementById('output');
+/* ============ STATE BERSAMA (persisten selama tab dibuka) ============ */
+let SLOT_MODEL = null;
+let ROMBEL_LIST = [];
+let jadwalPerRombel = {};
+let currentRombelIdJadwal = null;
+let rombelCounter = 0;
 
-// isi dropdown jenjang
-Object.keys(DATA).filter(k => !k.startsWith('_') && k !== 'catatan_umum').forEach(j => {
-  const opt = document.createElement('option');
-  opt.value = j; opt.textContent = `${j} — ${DATA[j].nama}`;
-  jenjangSel.appendChild(opt);
+/* ============ TAB SWITCHING ============ */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    if(btn.dataset.tab === 'jadwal') renderJadwalApp();
+  });
 });
 
-function refreshKelas(){
-  kelasSel.innerHTML = '';
-  const j = jenjangSel.value;
-  Object.keys(DATA[j].kelas).forEach(k => {
-    const opt = document.createElement('option');
-    opt.value = k; opt.textContent = 'Kelas ' + k;
-    kelasSel.appendChild(opt);
+/* ============ PANEL 1: KURIKULUM ============ */
+const kJenjangSel = document.getElementById('k_jenjang');
+const kKelasSel = document.getElementById('k_kelas');
+Object.keys(KURIKULUM).forEach(j => {
+  const opt = document.createElement('option'); opt.value = j; opt.textContent = `${j} — ${KURIKULUM[j].nama}`;
+  kJenjangSel.appendChild(opt);
+});
+function refreshKurikulumKelas(){
+  kKelasSel.innerHTML = '';
+  Object.keys(KURIKULUM[kJenjangSel.value].kelas).forEach(k => {
+    const opt = document.createElement('option'); opt.value = k; opt.textContent = 'Kelas ' + k;
+    kKelasSel.appendChild(opt);
   });
 }
-
-function render(){
-  const j = jenjangSel.value;
-  const k = kelasSel.value;
-  const data = DATA[j].kelas[k];
-  if(!data){ output.innerHTML = ''; return; }
-
+function renderKurikulum(){
+  const j = kJenjangSel.value, k = kKelasSel.value;
+  const data = KURIKULUM[j].kelas[k];
+  const output = document.getElementById('kurikulumOutput');
+  if(!data){ output.innerHTML=''; return; }
   const rows = data.wajib.map(m => `
-    <tr>
-      <td>${m.mapel}</td>
-      <td class="num">${m.intra}</td>
-      <td class="num">${m.ko || 0}</td>
-      <td class="num"><b>${m.total}</b></td>
-      <td class="num jp-per-minggu">${(m.total / data.minggu_efektif).toFixed(1)}</td>
-    </tr>`).join('');
-
-  let pilihanHtml = '';
-  if(data.pilihan){
-    pilihanHtml = `<div class="pilihan-box"><b>Mata Pelajaran Pilihan:</b><ul style="margin:6px 0 0;padding-left:18px;">`
-      + data.pilihan.map(p => {
-          if(p.intra_min !== undefined){
-            return `<li>${p.mapel}: ${p.intra_min}–${p.intra_maks} JP/tahun</li>`;
-          }
-          return `<li>${p.mapel}: ${p.intra} JP/tahun (maks ${p.maks_jp_minggu} JP/minggu)</li>`;
-        }).join('')
-      + `</ul></div>`;
-  }
-  if(data.pilihan_catatan){
-    pilihanHtml += `<div class="pilihan-box"><b>Mata Pelajaran Pilihan:</b><br>${data.pilihan_catatan}</div>`;
-  }
-  if(data.muatan_lokal){
-    pilihanHtml += `<div class="pilihan-box"><b>Muatan Lokal:</b> ${data.muatan_lokal.intra_min}–${data.muatan_lokal.intra_maks} JP/tahun</div>`;
-  }
-  if(data.catatan){
-    pilihanHtml += `<div class="note">Catatan: ${data.catatan}</div>`;
-  }
-
+    <tr><td>${m.mapel}</td><td class="num">${m.intra}</td><td class="num">${m.ko||0}</td><td class="num"><b>${m.total}</b></td>
+    <td class="num" style="color:var(--accent);">${(m.total/data.minggu_efektif).toFixed(1)}</td></tr>`).join('');
   output.innerHTML = `
     <div class="card">
-      <h2>${DATA[j].nama} — Kelas ${k}</h2>
+      <h2>${KURIKULUM[j].nama} — Kelas ${k}</h2>
       <div class="meta-row">
         <span>Minggu efektif: <b>${data.minggu_efektif}</b></span>
         <span>1 JP = <b>${data.jp_menit} menit</b></span>
         <span>Total JP wajib/tahun: <b>${data.total_wajib.total}</b></span>
       </div>
       <table>
-        <thead>
-          <tr><th>Mata Pelajaran</th><th>Intra</th><th>Ko</th><th>Total/th</th><th>JP/minggu</th></tr>
-        </thead>
+        <thead><tr><th>Mata Pelajaran</th><th>Intra</th><th>Ko</th><th>Total/th</th><th>JP/minggu</th></tr></thead>
         <tbody>${rows}</tbody>
-        <tfoot>
-          <tr>
-            <td>Total Wajib</td>
-            <td class="num">${data.total_wajib.intra}</td>
-            <td class="num">${data.total_wajib.ko}</td>
-            <td class="num">${data.total_wajib.total}</td>
-            <td class="num">${(data.total_wajib.total / data.minggu_efektif).toFixed(1)}</td>
-          </tr>
-        </tfoot>
+        <tfoot><tr><td>Total Wajib</td><td class="num">${data.total_wajib.intra}</td><td class="num">${data.total_wajib.ko}</td>
+        <td class="num">${data.total_wajib.total}</td><td class="num">${(data.total_wajib.total/data.minggu_efektif).toFixed(1)}</td></tr></tfoot>
       </table>
-      ${pilihanHtml}
-    </div>
-  `;
+    </div>`;
 }
+kJenjangSel.addEventListener('change', () => { refreshKurikulumKelas(); renderKurikulum(); });
+kKelasSel.addEventListener('change', renderKurikulum);
+refreshKurikulumKelas(); renderKurikulum();
 
-jenjangSel.addEventListener('change', () => { refreshKelas(); render(); });
-kelasSel.addEventListener('change', render);
+/* ============ PANEL 2: MODEL JAM ============ */
+const dayJpContainer = document.getElementById('dayJpInputs');
+const jamOutput = document.getElementById('jamOutput');
+const defaultJp = {Senin:8, Selasa:8, Rabu:8, Kamis:8, Jumat:6, Sabtu:6, Minggu:6};
 
-refreshKelas();
-render();
+function getActiveDays(){ return Array.from(document.querySelectorAll('.day-chip.active')).map(el => el.dataset.day); }
+function buildDayJpInputs(){
+  dayJpContainer.innerHTML = '';
+  getActiveDays().forEach(day => {
+    const div = document.createElement('div'); div.className = 'field';
+    div.innerHTML = `<label>JP ${day}</label><input type="number" class="jp-count" data-day="${day}" min="1" max="14" value="${defaultJp[day]||8}">`;
+    dayJpContainer.appendChild(div);
+  });
+}
+document.querySelectorAll('.day-chip').forEach(chip => {
+  chip.addEventListener('click', () => { chip.classList.toggle('active'); buildDayJpInputs(); });
+});
+function addMinutes(hhmm, mins){
+  const [h,m] = hhmm.split(':').map(Number);
+  const total = h*60+m+mins;
+  return String(Math.floor(total/60)%24).padStart(2,'0') + ':' + String(total%60).padStart(2,'0');
+}
+function generateDaySlots(startTime, jpCount, jpDurasi, istirahatList){
+  let current = startTime; const slots = [];
+  for(let i=1;i<=jpCount;i++){
+    const mulai=current, selesai=addMinutes(current,jpDurasi);
+    slots.push({tipe:'jp', jp_ke:i, mulai, selesai}); current=selesai;
+    const ist = istirahatList.find(x=>x.setelahJp===i);
+    if(ist && i<jpCount){
+      const istMulai=current, istSelesai=addMinutes(current, ist.durasi);
+      slots.push({tipe:'istirahat', mulai:istMulai, selesai:istSelesai}); current=istSelesai;
+    }
+  }
+  return slots;
+}
+function getIstirahatList(){
+  const jumlah = Number(document.getElementById('jumlahIstirahat').value);
+  const list = [{ setelahJp: Number(document.getElementById('posisiIstirahat1').value), durasi: Number(document.getElementById('durasiIstirahat1').value) }];
+  if(jumlah===2) list.push({ setelahJp: Number(document.getElementById('posisiIstirahat2').value), durasi: Number(document.getElementById('durasiIstirahat2').value) });
+  return list;
+}
+function renderJam(){
+  const jamMulai = document.getElementById('jamMulai').value;
+  const jpDurasi = Number(document.getElementById('jenjangJam').value);
+  const istirahatList = getIstirahatList();
+  const days = getActiveDays();
+  SLOT_MODEL = { jam_mulai: jamMulai, jp_menit: jpDurasi, istirahat: istirahatList, hari: {} };
+  jamOutput.innerHTML = '';
+  days.forEach(day => {
+    const jpInput = document.querySelector(`.jp-count[data-day="${day}"]`);
+    const jpCount = jpInput ? Number(jpInput.value) : 8;
+    const slots = generateDaySlots(jamMulai, jpCount, jpDurasi, istirahatList);
+    SLOT_MODEL.hari[day] = slots.map(s => ({...s, id: s.tipe==='jp' ? `${day}-${s.jp_ke}` : `${day}-istirahat-${s.mulai}`}));
+    const totalIstMenit = istirahatList.reduce((sum,x)=>sum+x.durasi,0);
+    const totalMenit = jpCount*jpDurasi + totalIstMenit;
+    const card = document.createElement('div'); card.className='card';
+    const rows = slots.map(s => s.tipe==='jp'
+      ? `<tr><td class="jam">${s.mulai}–${s.selesai}</td><td>JP ke-${s.jp_ke}</td></tr>`
+      : `<tr class="istirahat"><td class="jam">${s.mulai}–${s.selesai}</td><td>ISTIRAHAT</td></tr>`).join('');
+    card.innerHTML = `<h3>${day} <span style="font-size:.72rem;color:var(--muted);font-weight:500;">${jpCount} JP · ~${Math.round(totalMenit/60*10)/10} jam</span></h3><table>${rows}</table>`;
+    jamOutput.appendChild(card);
+  });
+}
+document.getElementById('btnGenerate').addEventListener('click', renderJam);
+document.getElementById('jenjangJam').addEventListener('change', renderJam);
+document.getElementById('jumlahIstirahat').addEventListener('change', (e) => {
+  const showKedua = e.target.value === '2';
+  document.getElementById('fieldDurasiIstirahat2').style.display = showKedua ? 'flex' : 'none';
+  document.getElementById('fieldPosisiIstirahat2').style.display = showKedua ? 'flex' : 'none';
+  renderJam();
+});
+buildDayJpInputs(); renderJam();
+
+/* ============ PANEL 3: ROMBEL ============ */
+const rJenjangSel = document.getElementById('r_jenjang');
+const rKelasSel = document.getElementById('r_kelas');
+Object.keys(KURIKULUM).forEach(j => {
+  const opt = document.createElement('option'); opt.value=j; opt.textContent=`${j} — ${KURIKULUM[j].nama}`;
+  rJenjangSel.appendChild(opt);
+});
+function refreshRombelKelas(){
+  rKelasSel.innerHTML='';
+  Object.keys(KURIKULUM[rJenjangSel.value].kelas).forEach(k => {
+    const opt = document.createElement('option'); opt.value=k; opt.textContent='Kelas '+k;
+    rKelasSel.appendChild(opt);
+  });
+}
+rJenjangSel.addEventListener('change', refreshRombelKelas);
+refreshRombelKelas();
+
+function tambahRombel(){
+  const nama = document.getElementById('namaRombel').value.trim();
+  const jenjang = rJenjangSel.value, kelas = rKelasSel.value;
+  const kapasitas = document.getElementById('kapasitas').value;
+  if(!nama){ alert('Isi nama rombel dulu, misal "7A"'); return; }
+  const kelasData = KURIKULUM[jenjang].kelas[kelas];
+  const mapelList = kelasData.wajib.map(m => ({ mapel: m.mapel, jp_per_minggu: Math.round((m.total/kelasData.minggu_efektif)*10)/10 }));
+  const totalJpMinggu = Math.round((kelasData.total_wajib.total/kelasData.minggu_efektif)*10)/10;
+  rombelCounter++;
+  ROMBEL_LIST.push({ id:'rombel-'+rombelCounter, nama, jenjang, kelas, jp_menit: kelasData.jp_menit,
+    kapasitas_slot_minggu: kapasitas ? Number(kapasitas) : null, mapel: mapelList, total_jp_minggu: totalJpMinggu });
+  jadwalPerRombel['rombel-'+rombelCounter] = {};
+  document.getElementById('namaRombel').value=''; document.getElementById('kapasitas').value='';
+  renderRombelList();
+}
+function hapusRombel(id){
+  ROMBEL_LIST = ROMBEL_LIST.filter(r => r.id!==id);
+  delete jadwalPerRombel[id];
+  if(currentRombelIdJadwal===id) currentRombelIdJadwal=null;
+  renderRombelList();
+}
+function renderRombelList(){
+  const container = document.getElementById('rombelList');
+  if(ROMBEL_LIST.length===0){ container.innerHTML = '<div class="empty">Belum ada rombel. Tambahkan rombel pertama di atas.</div>'; return; }
+  container.innerHTML = ROMBEL_LIST.map(r => {
+    const overCapacity = r.kapasitas_slot_minggu && r.total_jp_minggu > r.kapasitas_slot_minggu;
+    const rows = r.mapel.map(m => `<tr><td>${m.mapel}</td><td class="num">${m.jp_per_minggu}</td></tr>`).join('');
+    const capacityHtml = r.kapasitas_slot_minggu ? `
+      <div class="pilihan-box" style="${overCapacity?'background:#fbe9e7;border-color:#f2c6c2;color:#b3261e;':''}">
+        ${overCapacity ? `⚠️ Total JP wajib (${r.total_jp_minggu}) melebihi kapasitas slot (${r.kapasitas_slot_minggu}).` : `✓ Kapasitas cukup: ${r.total_jp_minggu} dari ${r.kapasitas_slot_minggu} slot/minggu.`}
+      </div>` : '';
+    return `<div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+        <div><h3 style="margin:0;">${r.nama}</h3><div style="color:var(--muted);font-size:.75rem;">${KURIKULUM[r.jenjang].nama} — Kelas ${r.kelas} · 1 JP = ${r.jp_menit} menit</div></div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <span class="badge ${overCapacity?'over':''}">${r.total_jp_minggu} JP/minggu</span>
+          <button class="btn danger" onclick="hapusRombel('${r.id}')">Hapus</button>
+        </div>
+      </div>
+      <table><thead><tr><th>Mata Pelajaran</th><th style="text-align:right;">JP/minggu</th></tr></thead><tbody>${rows}</tbody>
+      <tfoot><tr><td>Total</td><td class="num">${r.total_jp_minggu}</td></tr></tfoot></table>
+      ${capacityHtml}
+    </div>`;
+  }).join('');
+}
+document.getElementById('btnTambahRombel').addEventListener('click', tambahRombel);
+renderRombelList();
+
+/* ============ PANEL 4: JADWAL ============ */
+function renderJadwalApp(){
+  const appArea = document.getElementById('jadwalArea');
+  if(!SLOT_MODEL || Object.keys(SLOT_MODEL.hari).length===0){
+    appArea.innerHTML = '<div class="empty">Generate slot jam dulu di tab "2. Model Jam".</div>'; return;
+  }
+  if(ROMBEL_LIST.length===0){
+    appArea.innerHTML = '<div class="empty">Buat rombel dulu di tab "3. Buat Rombel".</div>'; return;
+  }
+  if(!currentRombelIdJadwal) currentRombelIdJadwal = ROMBEL_LIST[0].id;
+
+  appArea.innerHTML = `
+    <div class="toolbar"><label style="margin:0;">Rombel:</label><select id="rombelSelectJadwal"></select></div>
+    <div id="progressArea"></div><div id="gridArea"></div>`;
+  const sel = document.getElementById('rombelSelectJadwal');
+  ROMBEL_LIST.forEach(r => {
+    const opt = document.createElement('option'); opt.value=r.id; opt.textContent=`${r.nama} (${r.jenjang} Kelas ${r.kelas})`;
+    if(r.id===currentRombelIdJadwal) opt.selected=true;
+    sel.appendChild(opt);
+  });
+  sel.addEventListener('change', () => { currentRombelIdJadwal = sel.value; renderProgress(); renderGrid(); });
+  renderProgress(); renderGrid();
+}
+function getRombel(id){ return ROMBEL_LIST.find(r=>r.id===id); }
+function countJpTerpakai(rombelId, mapelName){
+  const jadwal = jadwalPerRombel[rombelId]||{};
+  return Object.values(jadwal).filter(v=>v===mapelName).length;
+}
+function renderProgress(){
+  const rombel = getRombel(currentRombelIdJadwal);
+  const progressArea = document.getElementById('progressArea');
+  if(!rombel){ progressArea.innerHTML=''; return; }
+  const rows = rombel.mapel.map(m => {
+    const target = m.jp_per_minggu, terpakai = countJpTerpakai(rombel.id, m.mapel);
+    const pct = Math.min(100,(terpakai/target)*100), over = terpakai>target, done = terpakai===target;
+    return `<div class="progress-row"><div class="nama">${m.mapel}</div>
+      <div class="progress-bar"><div class="progress-bar-fill ${over?'over':''}" style="width:${pct}%"></div></div>
+      <div class="progress-count ${over?'over':(done?'done':'')}">${terpakai} / ${target} JP</div></div>`;
+  }).join('');
+  progressArea.innerHTML = `<div class="progress-wrap"><h3>Progress Alokasi JP — ${rombel.nama}</h3>${rows}</div>`;
+}
+function renderGrid(){
+  const gridArea = document.getElementById('gridArea');
+  const rombel = getRombel(currentRombelIdJadwal);
+  if(!rombel){ gridArea.innerHTML=''; return; }
+  const days = Object.keys(SLOT_MODEL.hari);
+  let theadHtml = '<tr><th>Jam</th>' + days.map(d=>`<th>${d}</th>`).join('') + '</tr>';
+  const referensiHari = days.reduce((a,b)=>SLOT_MODEL.hari[a].length>=SLOT_MODEL.hari[b].length?a:b);
+  const refSlots = SLOT_MODEL.hari[referensiHari];
+  let bodyRows = '';
+  refSlots.forEach((refSlot, idx) => {
+    const jamLabel = refSlot.tipe==='istirahat' ? 'Istirahat' : `JP ${refSlot.jp_ke}`;
+    let row = `<tr><td class="jam-cell">${jamLabel}<br><span style="color:#999;">${refSlot.mulai}-${refSlot.selesai}</span></td>`;
+    days.forEach(day => {
+      const s = SLOT_MODEL.hari[day][idx];
+      if(!s){ row += '<td></td>'; return; }
+      if(s.tipe==='istirahat'){ row += `<td class="slot-cell istirahat-row">Istirahat</td>`; return; }
+      const isi = jadwalPerRombel[rombel.id][s.id];
+      row += `<td class="slot-cell ${isi?'filled':''}" data-slotid="${s.id}" onclick="openPicker(event,'${s.id}')">${isi||''}</td>`;
+    });
+    row += '</tr>'; bodyRows += row;
+  });
+  gridArea.innerHTML = `<table class="grid-table"><thead>${theadHtml}</thead><tbody>${bodyRows}</tbody></table>`;
+}
+function openPicker(evt, slotId){
+  closePicker();
+  const rombel = getRombel(currentRombelIdJadwal);
+  const picker = document.createElement('div'); picker.className='picker'; picker.id='activePicker';
+  const items = rombel.mapel.map(m => `<div class="picker-item" onclick="assignSlot('${slotId}','${m.mapel.replace(/'/g,"\\'")}')">${m.mapel}</div>`).join('');
+  picker.innerHTML = items + `<div class="picker-item clear" onclick="assignSlot('${slotId}', null)">Kosongkan</div>`;
+  document.body.appendChild(picker);
+  const rect = evt.target.getBoundingClientRect();
+  picker.style.top = (rect.bottom+window.scrollY+4)+'px';
+  picker.style.left = (rect.left+window.scrollX)+'px';
+  setTimeout(()=>document.addEventListener('click', outsideClick),0);
+}
+function outsideClick(e){ const picker=document.getElementById('activePicker'); if(picker && !picker.contains(e.target)) closePicker(); }
+function closePicker(){ const picker=document.getElementById('activePicker'); if(picker) picker.remove(); document.removeEventListener('click', outsideClick); }
+function assignSlot(slotId, mapelName){
+  if(mapelName) jadwalPerRombel[currentRombelIdJadwal][slotId]=mapelName;
+  else delete jadwalPerRombel[currentRombelIdJadwal][slotId];
+  closePicker(); renderProgress(); renderGrid();
+}
 </script>
 </body>
 </html>
