@@ -211,7 +211,8 @@ function render(){
       id: s.tipe === 'jp' ? `${day}-${s.jp_ke}` : `${day}-istirahat-${s.mulai}`
     }));
 
-    const totalMenit = jpCount * jpDurasi + istirahatDurasi;
+    const totalIstirahatMenit = istirahatList.reduce((sum, x) => sum + x.durasi, 0);
+    const totalMenit = jpCount * jpDurasi + totalIstirahatMenit;
     const card = document.createElement('div');
     card.className = 'card';
     const rows = slots.map(s => s.tipe === 'jp'
