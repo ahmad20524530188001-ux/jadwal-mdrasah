@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Buat Rombel — Jadwal Madrasah</title>
+<style>
+  :root{
+    --bg:#f6f5f1; --card:#ffffff; --ink:#1f2421; --muted:#6b7269;
+    --accent:#0f6a4f; --accent-soft:#e6f2ec; --line:#e4e1d8;
+    --danger:#b3261e; --danger-soft:#fbe9e7; --warn:#8a5a00; --warn-soft:#fff3d6;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);padding:24px 16px 60px;}
+  .wrap{max-width:1000px;margin:0 auto;}
+  h1{font-size:1.4rem;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:.85rem;margin-bottom:20px;}
+  .controls{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px;
+    background:var(--card); padding:18px; border-radius:12px; border:1px solid var(--line);
+    margin-bottom:20px; align-items:end;
+  }
+  .field{display:flex;flex-direction:column;gap:4px;}
+  label{font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;}
+  select,input{padding:8px 10px;border-radius:8px;border:1px solid var(--line);font-size:.92rem;background:#fff;color:var(--ink);}
+  .btn{
+    background:var(--accent);color:#fff;border:none;padding:9px 16px;border-radius:8px;
+    font-size:.9rem;cursor:pointer;font-weight:600;height:38px;
+  }
+  .btn.secondary{background:#fff;color:var(--accent);border:1px solid var(--accent);}
+  .btn.danger{background:#fff;color:var(--danger);border:1px solid var(--danger);padding:5px 10px;font-size:.78rem;height:auto;}
+
+  .rombel-list{display:flex;flex-direction:column;gap:14px;}
+  .rombel-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;}
+  .rombel-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+  .rombel-head h3{margin:0;font-size:1rem;}
+  .rombel-head .tag{font-size:.75rem;color:var(--muted);margin-top:2px;}
+  .badge-jp{
+    display:inline-block;font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:999px;
+  }
+  .badge-jp.ok{background:var(--accent-soft);color:var(--accent);}
+  .badge-jp.over{background:var(--danger-soft);color:var(--danger);}
+
+  table{width:100%;border-collapse:collapse;font-size:.85rem;margin-top:8px;}
+  th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);}
+  th{color:var(--muted);font-weight:600;font-size:.72rem;text-transform:uppercase;}
+  td.num{text-align:right;font-variant-numeric:tabular-nums;}
+  tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom:none;}
+
+  .capacity-box{
+    background:var(--warn-soft);border:1px solid #f0dfb8;color:var(--warn);
+    border-radius:10px;padding:10px 14px;font-size:.82rem;margin-top:12px;
+  }
+  .empty{color:var(--muted);font-size:.9rem;text-align:center;padding:30px;background:var(--card);border:1px dashed var(--line);border-radius:12px;}
+  .export-box{margin-top:24px;}
+  .export-box textarea{
+    width:100%;height:200px;font-family:'Consolas',monospace;font-size:.78rem;
+    padding:10px;border-radius:8px;border:1px solid var(--line);background:#fbfaf5;color:var(--ink);
+  }
+  .note{font-size:.8rem;color:var(--muted);margin-top:6px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Buat Rombel</h1>
+  <div class="sub">Pilih jenjang & kelas → sistem otomatis ambil daftar mapel dan JP dari kurikulum. Total JP/minggu inilah yang harus dijadwalkan tanpa bentrok.</div>
+
+  <div class="controls">
+    <div class="field">
+      <label>Nama Rombel</label>
+      <input type="text" id="namaRombel" placeholder="misal: 7A">
+    </div>
+    <div class="field">
+      <label>Jenjang</label>
+      <select id="jenjang"></select>
+    </div>
+    <div class="field">
+      <label>Kelas / Tingkat</label>
+      <select id="kelas"></select>
+    </div>
+    <div class="field">
+      <label>Kapasitas Slot/Minggu (opsional)</label>
+      <input type="number" id="kapasitas" placeholder="misal: 48" min="1">
+    </div>
+    <button class="btn" id="btnTambah">+ Tambah Rombel</button>
+  </div>
+
+  <div id="rombelList" class="rombel-list">
+    <div class="empty" id="emptyState">Belum ada rombel. Tambahkan rombel pertama di atas.</div>
+  </div>
+
+  <div class="export-box">
+    <label style="font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;">Export JSON Rombel (untuk mesin penjadwalan)</label>
+    <textarea id="exportArea" readonly></textarea>
+    <div class="note">Tiap rombel berisi daftar mapel + JP/minggu yang wajib dialokasikan. Ini jadi input utama untuk fitur penjadwalan anti-bentrok berikutnya.</div>
+  </div>
+</div>
+
+<script>
+const KURIKULUM = {"_meta": {"sumber": "Keputusan Menteri Agama RI Nomor 1503 Tahun 2025 tentang Perubahan atas KMA Nomor 450 Tahun 2024 tentang Pedoman Implementasi Kurikulum pada RA, MI, MTs, MA, dan MAK", "catatan": "Alokasi dalam satuan JP per tahun.", "struktur_field": {}}, "MI": {"nama": "Madrasah Ibtidaiyah", "kelas": {"1": {"minggu_efektif": 36, "jp_menit": 35, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Fikih", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Arab", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Pendidikan Pancasila", "intra": 144, "ko": 36, "total": 180}, {"mapel": "Bahasa Indonesia", "intra": 252, "ko": 36, "total": 288}, {"mapel": "Matematika", "intra": 144, "ko": 0, "total": 144}, {"mapel": "PJOK", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Seni dan Budaya", "intra": 108, "ko": 0, "total": 108}], "total_wajib": {"intra": 1044, "ko": 108, "total": 1152}}, "2": {"minggu_efektif": 36, "jp_menit": 35, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Fikih", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Arab", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Pendidikan Pancasila", "intra": 144, "ko": 36, "total": 180}, {"mapel": "Bahasa Indonesia", "intra": 288, "ko": 36, "total": 324}, {"mapel": "Matematika", "intra": 180, "ko": 0, "total": 180}, {"mapel": "PJOK", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Seni dan Budaya", "intra": 108, "ko": 0, "total": 108}], "total_wajib": {"intra": 1116, "ko": 108, "total": 1224}}, "3-4": {"minggu_efektif": 36, "jp_menit": 35, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Fikih", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Sejarah Kebudayaan Islam", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Arab", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Pendidikan Pancasila", "intra": 144, "ko": 0, "total": 144}, {"mapel": "Bahasa Indonesia", "intra": 216, "ko": 36, "total": 252}, {"mapel": "Matematika", "intra": 180, "ko": 0, "total": 180}, {"mapel": "Ilmu Pengetahuan Alam dan Sosial", "intra": 180, "ko": 36, "total": 216}, {"mapel": "PJOK", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Seni dan Budaya", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Bahasa Inggris", "intra": 72, "ko": 0, "total": 72}], "total_wajib": {"intra": 1368, "ko": 108, "total": 1476}}, "5": {"minggu_efektif": 36, "jp_menit": 35, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Akidah Akhlak", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Fikih", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Sejarah Kebudayaan Islam", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Arab", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Pendidikan Pancasila", "intra": 144, "ko": 0, "total": 144}, {"mapel": "Bahasa Indonesia", "intra": 216, "ko": 36, "total": 252}, {"mapel": "Matematika", "intra": 180, "ko": 0, "total": 180}, {"mapel": "Ilmu Pengetahuan Alam dan Sosial", "intra": 180, "ko": 0, "total": 180}, {"mapel": "PJOK", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Seni dan Budaya", "intra": 108, "ko": 36, "total": 144}, {"mapel": "Bahasa Inggris", "intra": 72, "ko": 0, "total": 72}], "total_wajib": {"intra": 1368, "ko": 108, "total": 1476}}, "6": {"minggu_efektif": 32, "jp_menit": 35, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Akidah Akhlak", "intra": 64, "ko": 32, "total": 96}, {"mapel": "Fikih", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Sejarah Kebudayaan Islam", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Bahasa Arab", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Pendidikan Pancasila", "intra": 128, "ko": 0, "total": 128}, {"mapel": "Bahasa Indonesia", "intra": 192, "ko": 32, "total": 224}, {"mapel": "Matematika", "intra": 160, "ko": 0, "total": 160}, {"mapel": "Ilmu Pengetahuan Alam dan Sosial", "intra": 160, "ko": 0, "total": 160}, {"mapel": "PJOK", "intra": 96, "ko": 0, "total": 96}, {"mapel": "Seni dan Budaya", "intra": 96, "ko": 0, "total": 96}, {"mapel": "Bahasa Inggris", "intra": 64, "ko": 0, "total": 64}], "total_wajib": {"intra": 1216, "ko": 96, "total": 1312}}}}, "MTs": {"nama": "Madrasah Tsanawiyah", "kelas": {"7": {"minggu_efektif": 36, "jp_menit": 40, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Fikih", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Sejarah Kebudayaan Islam", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Arab", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Pendidikan Pancasila", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Bahasa Indonesia", "intra": 180, "ko": 36, "total": 216}, {"mapel": "Matematika", "intra": 144, "ko": 0, "total": 144}, {"mapel": "Ilmu Pengetahuan Alam", "intra": 144, "ko": 0, "total": 144}, {"mapel": "Ilmu Pengetahuan Sosial", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Bahasa Inggris", "intra": 108, "ko": 0, "total": 108}, {"mapel": "PJOK", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Informatika", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Seni dan Budaya", "intra": 72, "ko": 0, "total": 72}], "total_wajib": {"intra": 1368, "ko": 144, "total": 1512}}, "8": {"minggu_efektif": 36, "jp_menit": 40, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Fikih", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Sejarah Kebudayaan Islam", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Arab", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Pendidikan Pancasila", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Indonesia", "intra": 180, "ko": 0, "total": 180}, {"mapel": "Matematika", "intra": 144, "ko": 36, "total": 180}, {"mapel": "Ilmu Pengetahuan Alam", "intra": 144, "ko": 36, "total": 180}, {"mapel": "Ilmu Pengetahuan Sosial", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Bahasa Inggris", "intra": 108, "ko": 0, "total": 108}, {"mapel": "PJOK", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Informatika", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Seni dan Budaya", "intra": 72, "ko": 36, "total": 108}], "total_wajib": {"intra": 1368, "ko": 144, "total": 1512}}, "9": {"minggu_efektif": 32, "jp_menit": 40, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Akidah Akhlak", "intra": 64, "ko": 32, "total": 96}, {"mapel": "Fikih", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Sejarah Kebudayaan Islam", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Bahasa Arab", "intra": 96, "ko": 0, "total": 96}, {"mapel": "Pendidikan Pancasila", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Bahasa Indonesia", "intra": 160, "ko": 0, "total": 160}, {"mapel": "Matematika", "intra": 128, "ko": 0, "total": 128}, {"mapel": "Ilmu Pengetahuan Alam", "intra": 128, "ko": 0, "total": 128}, {"mapel": "Ilmu Pengetahuan Sosial", "intra": 96, "ko": 32, "total": 128}, {"mapel": "Bahasa Inggris", "intra": 96, "ko": 32, "total": 128}, {"mapel": "PJOK", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Informatika", "intra": 64, "ko": 32, "total": 96}, {"mapel": "Seni dan Budaya", "intra": 64, "ko": 0, "total": 64}], "total_wajib": {"intra": 1216, "ko": 128, "total": 1344}}}}, "MA": {"nama": "Madrasah Aliyah", "kelas": {"10": {"minggu_efektif": 36, "jp_menit": 45, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Fikih", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Sejarah Kebudayaan Islam", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Arab", "intra": 144, "ko": 0, "total": 144}, {"mapel": "Pendidikan Pancasila", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Bahasa Indonesia", "intra": 108, "ko": 36, "total": 144}, {"mapel": "Matematika", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Ilmu Pengetahuan Alam (Fisika, Kimia, Biologi)", "intra": 216, "ko": 0, "total": 216}, {"mapel": "Ilmu Pengetahuan Sosial (Sosiologi, Ekonomi, Sejarah, Geografi)", "intra": 288, "ko": 0, "total": 288}, {"mapel": "Bahasa Inggris", "intra": 108, "ko": 0, "total": 108}, {"mapel": "PJOK", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Informatika", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Seni, Budaya, dan Prakarya", "intra": 72, "ko": 0, "total": 72}], "total_wajib": {"intra": 1548, "ko": 108, "total": 1656}}, "11": {"minggu_efektif": 36, "jp_menit": 45, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Akidah Akhlak", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Fikih", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Sejarah Kebudayaan Islam", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Arab", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Pendidikan Pancasila", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Bahasa Indonesia", "intra": 108, "ko": 0, "total": 108}, {"mapel": "Matematika", "intra": 108, "ko": 36, "total": 144}, {"mapel": "Bahasa Inggris", "intra": 108, "ko": 0, "total": 108}, {"mapel": "PJOK", "intra": 72, "ko": 36, "total": 108}, {"mapel": "Sejarah", "intra": 72, "ko": 0, "total": 72}, {"mapel": "Seni dan Budaya", "intra": 72, "ko": 0, "total": 72}], "total_wajib": {"intra": 972, "ko": 108, "total": 1080}}, "12": {"minggu_efektif": 32, "jp_menit": 45, "wajib": [{"mapel": "Al-Qur'an Hadis", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Akidah Akhlak", "intra": 64, "ko": 32, "total": 96}, {"mapel": "Fikih", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Sejarah Kebudayaan Islam", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Bahasa Arab", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Pendidikan Pancasila", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Bahasa Indonesia", "intra": 96, "ko": 0, "total": 96}, {"mapel": "Matematika", "intra": 96, "ko": 32, "total": 128}, {"mapel": "Bahasa Inggris", "intra": 96, "ko": 0, "total": 96}, {"mapel": "PJOK", "intra": 48, "ko": 16, "total": 64}, {"mapel": "Sejarah", "intra": 64, "ko": 0, "total": 64}, {"mapel": "Seni dan Budaya", "intra": 48, "ko": 16, "total": 64}], "total_wajib": {"intra": 832, "ko": 96, "total": 928}}}}};
+
+let rombelData = []; // in-memory, bukan localStorage
+let rombelCounter = 0;
+
+const jenjangSel = document.getElementById('jenjang');
+const kelasSel = document.getElementById('kelas');
+
+Object.keys(KURIKULUM).filter(k => !k.startsWith('_')).forEach(j => {
+  const opt = document.createElement('option');
+  opt.value = j; opt.textContent = `${j} — ${KURIKULUM[j].nama}`;
+  jenjangSel.appendChild(opt);
+});
+
+function refreshKelas(){
+  kelasSel.innerHTML = '';
+  const j = jenjangSel.value;
+  Object.keys(KURIKULUM[j].kelas).forEach(k => {
+    const opt = document.createElement('option');
+    opt.value = k; opt.textContent = 'Kelas ' + k;
+    kelasSel.appendChild(opt);
+  });
+}
+jenjangSel.addEventListener('change', refreshKelas);
+refreshKelas();
+
+function tambahRombel(){
+  const nama = document.getElementById('namaRombel').value.trim();
+  const jenjang = jenjangSel.value;
+  const kelas = kelasSel.value;
+  const kapasitas = document.getElementById('kapasitas').value;
+
+  if(!nama){
+    alert('Isi nama rombel dulu, misal "7A"');
+    return;
+  }
+
+  const kelasData = KURIKULUM[jenjang].kelas[kelas];
+  const mapelList = kelasData.wajib.map(m => ({
+    mapel: m.mapel,
+    jp_per_minggu: Math.round((m.total / kelasData.minggu_efektif) * 10) / 10
+  }));
+  const totalJpMinggu = Math.round((kelasData.total_wajib.total / kelasData.minggu_efektif) * 10) / 10;
+
+  rombelCounter++;
+  rombelData.push({
+    id: 'rombel-' + rombelCounter,
+    nama, jenjang, kelas,
+    jp_menit: kelasData.jp_menit,
+    kapasitas_slot_minggu: kapasitas ? Number(kapasitas) : null,
+    mapel: mapelList,
+    total_jp_minggu: totalJpMinggu
+  });
+
+  document.getElementById('namaRombel').value = '';
+  document.getElementById('kapasitas').value = '';
+  render();
+}
+
+function hapusRombel(id){
+  rombelData = rombelData.filter(r => r.id !== id);
+  render();
+}
+
+function render(){
+  const container = document.getElementById('rombelList');
+  const empty = document.getElementById('emptyState');
+
+  if(rombelData.length === 0){
+    container.innerHTML = '';
+    container.appendChild(empty);
+    document.getElementById('exportArea').value = '';
+    return;
+  }
+
+  container.innerHTML = rombelData.map(r => {
+    const overCapacity = r.kapasitas_slot_minggu && r.total_jp_minggu > r.kapasitas_slot_minggu;
+    const rows = r.mapel.map(m => `
+      <tr><td>${m.mapel}</td><td class="num">${m.jp_per_minggu}</td></tr>
+    `).join('');
+    const capacityHtml = r.kapasitas_slot_minggu ? `
+      <div class="capacity-box" style="${overCapacity ? 'background:#fbe9e7;border-color:#f2c6c2;color:#b3261e;' : ''}">
+        ${overCapacity
+          ? `⚠️ Total JP wajib (${r.total_jp_minggu}) melebihi kapasitas slot (${r.kapasitas_slot_minggu}). Perlu tambah slot atau kurangi alokasi.`
+          : `✓ Kapasitas slot cukup: ${r.total_jp_minggu} dari ${r.kapasitas_slot_minggu} slot/minggu terpakai.`}
+      </div>` : '';
+
+    return `
+      <div class="rombel-card">
+        <div class="rombel-head">
+          <div>
+            <h3>${r.nama}</h3>
+            <div class="tag">${KURIKULUM[r.jenjang].nama} — Kelas ${r.kelas} · 1 JP = ${r.jp_menit} menit</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span class="badge-jp ${overCapacity ? 'over' : 'ok'}">${r.total_jp_minggu} JP/minggu</span>
+            <button class="btn danger" onclick="hapusRombel('${r.id}')">Hapus</button>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>Mata Pelajaran</th><th style="text-align:right;">JP/minggu</th></tr></thead>
+          <tbody>${rows}</tbody>
+          <tfoot><tr><td>Total</td><td class="num">${r.total_jp_minggu}</td></tr></tfoot>
+        </table>
+        ${capacityHtml}
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('exportArea').value = JSON.stringify(rombelData, null, 2);
+}
+
+document.getElementById('btnTambah').addEventListener('click', tambahRombel);
+</script>
+</body>
+</html>
