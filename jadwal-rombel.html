@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Jadwal Rombel — Anti Bentrok</title>
+<style>
+  :root{
+    --bg:#f6f5f1; --card:#ffffff; --ink:#1f2421; --muted:#6b7269;
+    --accent:#0f6a4f; --accent-soft:#e6f2ec; --line:#e4e1d8;
+    --danger:#b3261e; --danger-soft:#fbe9e7; --warn:#8a5a00; --warn-soft:#fff3d6;
+    --istirahat-bg:#f0efe9;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);padding:24px 16px 60px;}
+  .wrap{max-width:1100px;margin:0 auto;}
+  h1{font-size:1.4rem;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:.85rem;margin-bottom:20px;}
+
+  .import-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:18px;}
+  .import-card h2{font-size:.95rem;margin:0 0 10px;}
+  .import-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .import-grid .field{display:flex;flex-direction:column;gap:4px;}
+  label{font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;}
+  textarea{
+    width:100%;height:110px;font-family:'Consolas',monospace;font-size:.75rem;
+    padding:8px;border-radius:8px;border:1px solid var(--line);background:#fbfaf5;color:var(--ink);
+    resize:vertical;
+  }
+  select{padding:8px 10px;border-radius:8px;border:1px solid var(--line);font-size:.9rem;background:#fff;color:var(--ink);}
+  .btn{
+    background:var(--accent);color:#fff;border:none;padding:9px 16px;border-radius:8px;
+    font-size:.9rem;cursor:pointer;font-weight:600;margin-top:10px;
+  }
+  .btn.small{padding:5px 10px;font-size:.78rem;}
+  .status{font-size:.8rem;margin-top:8px;padding:8px 10px;border-radius:8px;}
+  .status.ok{background:var(--accent-soft);color:var(--accent);}
+  .status.err{background:var(--danger-soft);color:var(--danger);}
+
+  .toolbar{display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap;}
+
+  .progress-wrap{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:16px;}
+  .progress-wrap h3{font-size:.9rem;margin:0 0 10px;}
+  .progress-row{display:flex;align-items:center;gap:10px;font-size:.82rem;padding:4px 0;}
+  .progress-row .nama{flex:0 0 220px;}
+  .progress-bar{flex:1;height:8px;background:#eee;border-radius:99px;overflow:hidden;}
+  .progress-bar-fill{height:100%;background:var(--accent);}
+  .progress-bar-fill.over{background:var(--danger);}
+  .progress-count{flex:0 0 70px;text-align:right;font-variant-numeric:tabular-nums;color:var(--muted);}
+  .progress-count.over{color:var(--danger);font-weight:700;}
+  .progress-count.done{color:var(--accent);font-weight:700;}
+
+  table.grid-table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:.82rem;}
+  table.grid-table th{background:#faf9f5;padding:8px;text-align:center;border-bottom:1px solid var(--line);font-size:.78rem;color:var(--muted);}
+  table.grid-table td{border:1px solid var(--line);padding:0;vertical-align:top;}
+  .jam-cell{padding:6px 8px;color:var(--muted);font-size:.72rem;white-space:nowrap;background:#faf9f5;}
+  .slot-cell{
+    padding:6px 8px;min-height:44px;min-width:110px;cursor:pointer;transition:background .1s;
+  }
+  .slot-cell:hover{background:var(--accent-soft);}
+  .slot-cell.filled{background:#eef7f2;font-weight:600;color:var(--accent);}
+  .slot-cell.istirahat-row{background:var(--istirahat-bg);color:var(--muted);font-size:.72rem;text-align:center;cursor:default;}
+  .picker{
+    position:fixed; z-index:50; background:#fff; border:1px solid var(--line); border-radius:10px;
+    box-shadow:0 8px 24px rgba(0,0,0,.15); padding:8px; min-width:220px; max-height:300px; overflow-y:auto;
+  }
+  .picker-item{padding:7px 10px;border-radius:6px;cursor:pointer;font-size:.85rem;}
+  .picker-item:hover{background:var(--accent-soft);}
+  .picker-item.clear{color:var(--danger);border-top:1px solid var(--line);margin-top:4px;}
+  .empty{color:var(--muted);font-size:.9rem;text-align:center;padding:30px;background:var(--card);border:1px dashed var(--line);border-radius:12px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Jadwal Rombel — Anti Bentrok</h1>
+  <div class="sub">Klik slot kosong untuk isi mapel. Progress JP per mapel dilacak otomatis dibanding kebutuhan dari rombel.</div>
+
+  <div class="import-card">
+    <h2>1. Import Data</h2>
+    <div class="import-grid">
+      <div class="field">
+        <label>Export JSON dari Model Jam</label>
+        <textarea id="importSlot" placeholder='{"jam_mulai":"07:00", "jp_menit":40, "istirahat":[...], "hari": {...}}'></textarea>
+      </div>
+      <div class="field">
+        <label>Export JSON dari Buat Rombel</label>
+        <textarea id="importRombel" placeholder='[{"id":"rombel-1","nama":"7A","mapel":[...]}]'></textarea>
+      </div>
+    </div>
+    <button class="btn" id="btnMuat">Muat Data</button>
+    <div id="importStatus"></div>
+  </div>
+
+  <div id="appArea"></div>
+</div>
+
+<script>
+let SLOT_MODEL = null;
+let ROMBEL_LIST = [];
+let jadwalPerRombel = {}; // { rombelId: { "Senin-1": "Matematika", ... } }
+let currentRombelId = null;
+
+document.getElementById('btnMuat').addEventListener('click', () => {
+  const statusEl = document.getElementById('importStatus');
+  try{
+    const slotRaw = document.getElementById('importSlot').value.trim();
+    const rombelRaw = document.getElementById('importRombel').value.trim();
+    if(!slotRaw || !rombelRaw){
+      statusEl.className = 'status err';
+      statusEl.textContent = 'Isi kedua kotak JSON dulu (dari Model Jam dan Buat Rombel).';
+      return;
+    }
+    SLOT_MODEL = JSON.parse(slotRaw);
+    ROMBEL_LIST = JSON.parse(rombelRaw);
+    ROMBEL_LIST.forEach(r => { if(!jadwalPerRombel[r.id]) jadwalPerRombel[r.id] = {}; });
+    currentRombelId = ROMBEL_LIST[0] ? ROMBEL_LIST[0].id : null;
+    statusEl.className = 'status ok';
+    statusEl.textContent = `✓ Berhasil: ${Object.keys(SLOT_MODEL.hari).length} hari, ${ROMBEL_LIST.length} rombel dimuat.`;
+    renderApp();
+  }catch(e){
+    statusEl.className = 'status err';
+    statusEl.textContent = 'Gagal parse JSON: ' + e.message;
+  }
+});
+
+function renderApp(){
+  const appArea = document.getElementById('appArea');
+  if(!SLOT_MODEL || ROMBEL_LIST.length === 0){
+    appArea.innerHTML = '<div class="empty">Import data model jam & rombel dulu di atas.</div>';
+    return;
+  }
+
+  appArea.innerHTML = `
+    <div class="toolbar">
+      <label style="margin:0;">Rombel:</label>
+      <select id="rombelSelect"></select>
+    </div>
+    <div id="progressArea"></div>
+    <div id="gridArea"></div>
+  `;
+
+  const sel = document.getElementById('rombelSelect');
+  ROMBEL_LIST.forEach(r => {
+    const opt = document.createElement('option');
+    opt.value = r.id; opt.textContent = `${r.nama} (${r.jenjang} Kelas ${r.kelas})`;
+    if(r.id === currentRombelId) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  sel.addEventListener('change', () => { currentRombelId = sel.value; renderProgress(); renderGrid(); });
+
+  renderProgress();
+  renderGrid();
+}
+
+function getRombel(id){ return ROMBEL_LIST.find(r => r.id === id); }
+
+function countJpTerpakai(rombelId, mapelName){
+  const jadwal = jadwalPerRombel[rombelId] || {};
+  return Object.values(jadwal).filter(v => v === mapelName).length;
+}
+
+function renderProgress(){
+  const rombel = getRombel(currentRombelId);
+  const progressArea = document.getElementById('progressArea');
+  if(!rombel){ progressArea.innerHTML=''; return; }
+
+  const rows = rombel.mapel.map(m => {
+    const target = m.jp_per_minggu;
+    const terpakai = countJpTerpakai(rombel.id, m.mapel);
+    const pct = Math.min(100, (terpakai/target)*100);
+    const over = terpakai > target;
+    const done = terpakai === target;
+    return `
+      <div class="progress-row">
+        <div class="nama">${m.mapel}</div>
+        <div class="progress-bar"><div class="progress-bar-fill ${over?'over':''}" style="width:${pct}%"></div></div>
+        <div class="progress-count ${over?'over':(done?'done':'')}">${terpakai} / ${target} JP</div>
+      </div>
+    `;
+  }).join('');
+
+  progressArea.innerHTML = `
+    <div class="progress-wrap">
+      <h3>Progress Alokasi JP — ${rombel.nama}</h3>
+      ${rows}
+    </div>
+  `;
+}
+
+function renderGrid(){
+  const gridArea = document.getElementById('gridArea');
+  const rombel = getRombel(currentRombelId);
+  if(!rombel){ gridArea.innerHTML=''; return; }
+
+  const days = Object.keys(SLOT_MODEL.hari);
+  // ambil jumlah JP maksimum di antara semua hari untuk baris
+  const maxJp = Math.max(...days.map(d => SLOT_MODEL.hari[d].filter(s => s.tipe==='jp').length));
+
+  let theadHtml = '<tr><th>Jam</th>' + days.map(d => `<th>${d}</th>`).join('') + '</tr>';
+
+  // bikin baris berdasarkan slot index gabungan (jp & istirahat) dari hari dgn slot terbanyak
+  const referensiHari = days.reduce((a,b) => SLOT_MODEL.hari[a].length >= SLOT_MODEL.hari[b].length ? a : b);
+  const refSlots = SLOT_MODEL.hari[referensiHari];
+
+  let bodyRows = '';
+  refSlots.forEach((refSlot, idx) => {
+    const jamLabel = refSlot.tipe === 'istirahat' ? 'Istirahat' : `JP ${refSlot.jp_ke}`;
+    let row = `<tr><td class="jam-cell">${jamLabel}<br><span style="color:#999;">${refSlot.mulai}-${refSlot.selesai}</span></td>`;
+    days.forEach(day => {
+      const daySlots = SLOT_MODEL.hari[day];
+      const s = daySlots[idx];
+      if(!s){ row += '<td></td>'; return; }
+      if(s.tipe === 'istirahat'){
+        row += `<td class="slot-cell istirahat-row">Istirahat</td>`;
+        return;
+      }
+      const isi = jadwalPerRombel[rombel.id][s.id];
+      row += `<td class="slot-cell ${isi?'filled':''}" data-slotid="${s.id}" onclick="openPicker(event,'${s.id}')">${isi || ''}</td>`;
+    });
+    row += '</tr>';
+    bodyRows += row;
+  });
+
+  gridArea.innerHTML = `<table class="grid-table"><thead>${theadHtml}</thead><tbody>${bodyRows}</tbody></table>`;
+}
+
+function openPicker(evt, slotId){
+  closePicker();
+  const rombel = getRombel(currentRombelId);
+  const picker = document.createElement('div');
+  picker.className = 'picker';
+  picker.id = 'activePicker';
+
+  const items = rombel.mapel.map(m => `<div class="picker-item" onclick="assignSlot('${slotId}','${m.mapel.replace(/'/g,"\\'")}')">${m.mapel}</div>`).join('');
+  picker.innerHTML = items + `<div class="picker-item clear" onclick="assignSlot('${slotId}', null)">Kosongkan</div>`;
+
+  document.body.appendChild(picker);
+  const rect = evt.target.getBoundingClientRect();
+  picker.style.top = (rect.bottom + window.scrollY + 4) + 'px';
+  picker.style.left = (rect.left + window.scrollX) + 'px';
+
+  setTimeout(() => document.addEventListener('click', outsideClick), 0);
+}
+
+function outsideClick(e){
+  const picker = document.getElementById('activePicker');
+  if(picker && !picker.contains(e.target)){
+    closePicker();
+  }
+}
+function closePicker(){
+  const picker = document.getElementById('activePicker');
+  if(picker) picker.remove();
+  document.removeEventListener('click', outsideClick);
+}
+
+function assignSlot(slotId, mapelName){
+  if(mapelName){
+    jadwalPerRombel[currentRombelId][slotId] = mapelName;
+  }else{
+    delete jadwalPerRombel[currentRombelId][slotId];
+  }
+  closePicker();
+  renderProgress();
+  renderGrid();
+}
+</script>
+</body>
+</html>
