@@ -69,12 +69,27 @@
       </select>
     </div>
     <div class="field">
-      <label>Durasi Istirahat (menit)</label>
-      <input type="number" id="durasiIstirahat" value="20" min="5" max="60">
+      <label>Jumlah Istirahat</label>
+      <select id="jumlahIstirahat">
+        <option value="1">1 kali istirahat</option>
+        <option value="2">2 kali istirahat</option>
+      </select>
     </div>
     <div class="field">
-      <label>Istirahat setelah JP ke-</label>
-      <input type="number" id="posisiIstirahat" value="4" min="1" max="12">
+      <label>Durasi Istirahat 1 (menit)</label>
+      <input type="number" id="durasiIstirahat1" value="20" min="5" max="60">
+    </div>
+    <div class="field">
+      <label>Istirahat 1 setelah JP ke-</label>
+      <input type="number" id="posisiIstirahat1" value="4" min="1" max="14">
+    </div>
+    <div class="field" id="fieldDurasiIstirahat2" style="display:none;">
+      <label>Durasi Istirahat 2 (menit)</label>
+      <input type="number" id="durasiIstirahat2" value="15" min="5" max="60">
+    </div>
+    <div class="field" id="fieldPosisiIstirahat2" style="display:none;">
+      <label>Istirahat 2 setelah JP ke-</label>
+      <input type="number" id="posisiIstirahat2" value="7" min="1" max="14">
     </div>
 
     <div class="day-toggles">
@@ -85,6 +100,7 @@
       <div class="day-chip active" data-day="Kamis">Kamis</div>
       <div class="day-chip active" data-day="Jumat">Jumat</div>
       <div class="day-chip active" data-day="Sabtu">Sabtu</div>
+      <div class="day-chip" data-day="Minggu">Minggu</div>
     </div>
 
     <div class="day-jp" id="dayJpInputs"></div>
@@ -104,13 +120,13 @@
 </div>
 
 <script>
-const DAYS_DEFAULT = ["Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+const DAYS_DEFAULT = ["Senin","Selasa","Rabu","Kamis","Jumat","Sabtu","Minggu"];
 const dayJpContainer = document.getElementById('dayJpInputs');
 const output = document.getElementById('output');
 const exportArea = document.getElementById('exportArea');
 
-// default JP per day: weekdays 8, Sabtu 5
-const defaultJp = {Senin:8, Selasa:8, Rabu:8, Kamis:8, Jumat:6, Sabtu:5};
+// default JP per day: Senin-Kamis 8 JP, Jumat/Sabtu/Minggu 6 JP
+const defaultJp = {Senin:8, Selasa:8, Rabu:8, Kamis:8, Jumat:6, Sabtu:6, Minggu:6};
 
 function buildDayJpInputs(){
   dayJpContainer.innerHTML = '';
@@ -141,7 +157,8 @@ function addMinutes(hhmm, mins){
   return String(nh).padStart(2,'0') + ':' + String(nm).padStart(2,'0');
 }
 
-function generateDaySlots(startTime, jpCount, jpDurasi, istirahatSetelahJp, istirahatDurasi){
+function generateDaySlots(startTime, jpCount, jpDurasi, istirahatList){
+  // istirahatList: array of {setelahJp, durasi}
   let current = startTime;
   const slots = [];
   for(let i=1; i<=jpCount; i++){
@@ -149,9 +166,10 @@ function generateDaySlots(startTime, jpCount, jpDurasi, istirahatSetelahJp, isti
     const selesai = addMinutes(current, jpDurasi);
     slots.push({tipe:'jp', jp_ke:i, mulai, selesai});
     current = selesai;
-    if(i === istirahatSetelahJp && i < jpCount){
+    const ist = istirahatList.find(x => x.setelahJp === i);
+    if(ist && i < jpCount){
       const istMulai = current;
-      const istSelesai = addMinutes(current, istirahatDurasi);
+      const istSelesai = addMinutes(current, ist.durasi);
       slots.push({tipe:'istirahat', mulai:istMulai, selesai:istSelesai});
       current = istSelesai;
     }
@@ -159,20 +177,34 @@ function generateDaySlots(startTime, jpCount, jpDurasi, istirahatSetelahJp, isti
   return slots;
 }
 
+function getIstirahatList(){
+  const jumlah = Number(document.getElementById('jumlahIstirahat').value);
+  const list = [
+    { setelahJp: Number(document.getElementById('posisiIstirahat1').value),
+      durasi: Number(document.getElementById('durasiIstirahat1').value) }
+  ];
+  if(jumlah === 2){
+    list.push({
+      setelahJp: Number(document.getElementById('posisiIstirahat2').value),
+      durasi: Number(document.getElementById('durasiIstirahat2').value)
+    });
+  }
+  return list;
+}
+
 function render(){
   const jamMulai = document.getElementById('jamMulai').value;
   const jpDurasi = Number(document.getElementById('jenjang').value);
-  const istirahatDurasi = Number(document.getElementById('durasiIstirahat').value);
-  const posisiIstirahat = Number(document.getElementById('posisiIstirahat').value);
+  const istirahatList = getIstirahatList();
   const days = getActiveDays();
 
-  const scheduleModel = { jam_mulai: jamMulai, jp_menit: jpDurasi, hari: {} };
+  const scheduleModel = { jam_mulai: jamMulai, jp_menit: jpDurasi, istirahat: istirahatList, hari: {} };
 
   output.innerHTML = '';
   days.forEach(day => {
     const jpInput = document.querySelector(`.jp-count[data-day="${day}"]`);
     const jpCount = jpInput ? Number(jpInput.value) : 8;
-    const slots = generateDaySlots(jamMulai, jpCount, jpDurasi, posisiIstirahat, istirahatDurasi);
+    const slots = generateDaySlots(jamMulai, jpCount, jpDurasi, istirahatList);
 
     scheduleModel.hari[day] = slots.map(s => ({
       ...s,
@@ -198,6 +230,13 @@ function render(){
 
 document.getElementById('btnGenerate').addEventListener('click', render);
 document.getElementById('jenjang').addEventListener('change', render);
+
+document.getElementById('jumlahIstirahat').addEventListener('change', (e) => {
+  const showKedua = e.target.value === '2';
+  document.getElementById('fieldDurasiIstirahat2').style.display = showKedua ? 'flex' : 'none';
+  document.getElementById('fieldPosisiIstirahat2').style.display = showKedua ? 'flex' : 'none';
+  render();
+});
 
 buildDayJpInputs();
 render();
