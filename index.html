@@ -53,7 +53,7 @@
 <body>
 <div class="wrap">
   <h1>Model Jam & Slot Waktu</h1>
-  <div class="sub">Atur jam mulai, durasi JP, dan 2x waktu istirahat secara dinamis.</div>
+  <div class="sub">Atur jam mulai, durasi JP, dan istirahat — hasilnya jadi slot yang dipakai mesin penjadwalan.</div>
 
   <div class="controls">
     <div class="field">
@@ -61,32 +61,20 @@
       <input type="time" id="jamMulai" value="07:00">
     </div>
     <div class="field">
-      <label>Jenjang (1 JP)</label>
+      <label>Jenjang (durasi 1 JP)</label>
       <select id="jenjang">
         <option value="35">MI — 35 menit</option>
         <option value="40" selected>MTs — 40 menit</option>
         <option value="45">MA — 45 menit</option>
       </select>
     </div>
-    
-    <!-- Istirahat 1 -->
     <div class="field">
-      <label>Istirahat 1: Setelah JP</label>
-      <input type="number" id="posisiIstirahat1" value="4" min="1" max="12">
+      <label>Durasi Istirahat (menit)</label>
+      <input type="number" id="durasiIstirahat" value="20" min="5" max="60">
     </div>
     <div class="field">
-      <label>Durasi Istirahat 1 (mnt)</label>
-      <input type="number" id="durasiIstirahat1" value="15" min="5" max="60">
-    </div>
-
-    <!-- Istirahat 2 -->
-    <div class="field">
-      <label>Istirahat 2: Setelah JP</label>
-      <input type="number" id="posisiIstirahat2" value="6" min="0" max="12" placeholder="0 = nonaktif">
-    </div>
-    <div class="field">
-      <label>Durasi Istirahat 2 (mnt)</label>
-      <input type="number" id="durasiIstirahat2" value="20" min="0" max="60">
+      <label>Istirahat setelah JP ke-</label>
+      <input type="number" id="posisiIstirahat" value="4" min="1" max="12">
     </div>
 
     <div class="day-toggles">
@@ -96,8 +84,7 @@
       <div class="day-chip active" data-day="Rabu">Rabu</div>
       <div class="day-chip active" data-day="Kamis">Kamis</div>
       <div class="day-chip active" data-day="Jumat">Jumat</div>
-      <div class="day-chip" data-day="Sabtu">Sabtu</div>
-      <div class="day-chip" data-day="Minggu">Minggu</div>
+      <div class="day-chip active" data-day="Sabtu">Sabtu</div>
     </div>
 
     <div class="day-jp" id="dayJpInputs"></div>
@@ -112,16 +99,18 @@
   <div class="export-box">
     <label style="font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;">Export JSON (untuk dipakai mesin penjadwalan)</label>
     <textarea id="exportArea" readonly></textarea>
+    <div class="note">Struktur ini nanti jadi input untuk fitur "buat rombel" dan "anti-bentrok" — tiap slot punya id unik (misal <code>Senin-1</code>) yang dipakai untuk cek tabrakan jadwal.</div>
   </div>
 </div>
 
 <script>
+const DAYS_DEFAULT = ["Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
 const dayJpContainer = document.getElementById('dayJpInputs');
 const output = document.getElementById('output');
 const exportArea = document.getElementById('exportArea');
 
-// Default JP per day
-const defaultJp = {Senin:8, Selasa:8, Rabu:8, Kamis:8, Jumat:6, Sabtu:6, Minggu:6};
+// default JP per day: weekdays 8, Sabtu 5
+const defaultJp = {Senin:8, Selasa:8, Rabu:8, Kamis:8, Jumat:6, Sabtu:5};
 
 function buildDayJpInputs(){
   dayJpContainer.innerHTML = '';
@@ -152,29 +141,18 @@ function addMinutes(hhmm, mins){
   return String(nh).padStart(2,'0') + ':' + String(nm).padStart(2,'0');
 }
 
-function generateDaySlots(startTime, jpCount, jpDurasi, posIst1, durIst1, posIst2, durIst2){
+function generateDaySlots(startTime, jpCount, jpDurasi, istirahatSetelahJp, istirahatDurasi){
   let current = startTime;
   const slots = [];
-  
   for(let i=1; i<=jpCount; i++){
     const mulai = current;
     const selesai = addMinutes(current, jpDurasi);
     slots.push({tipe:'jp', jp_ke:i, mulai, selesai});
     current = selesai;
-    
-    // Cek apakah ada Istirahat 1 di posisi JP ini (dan bukan di jam pulang)
-    if(i === posIst1 && i < jpCount && durIst1 > 0){
+    if(i === istirahatSetelahJp && i < jpCount){
       const istMulai = current;
-      const istSelesai = addMinutes(current, durIst1);
-      slots.push({tipe:'istirahat', label:'ISTIRAHAT 1', mulai:istMulai, selesai:istSelesai});
-      current = istSelesai;
-    }
-    
-    // Cek apakah ada Istirahat 2 di posisi JP ini (dan bukan di jam pulang)
-    if(i === posIst2 && i < jpCount && durIst2 > 0){
-      const istMulai = current;
-      const istSelesai = addMinutes(current, durIst2);
-      slots.push({tipe:'istirahat', label:'ISTIRAHAT 2', mulai:istMulai, selesai:istSelesai});
+      const istSelesai = addMinutes(current, istirahatDurasi);
+      slots.push({tipe:'istirahat', mulai:istMulai, selesai:istSelesai});
       current = istSelesai;
     }
   }
@@ -184,44 +162,30 @@ function generateDaySlots(startTime, jpCount, jpDurasi, posIst1, durIst1, posIst
 function render(){
   const jamMulai = document.getElementById('jamMulai').value;
   const jpDurasi = Number(document.getElementById('jenjang').value);
-  
-  const posIst1 = Number(document.getElementById('posisiIstirahat1').value);
-  const durIst1 = Number(document.getElementById('durasiIstirahat1').value);
-  
-  const posIst2 = Number(document.getElementById('posisiIstirahat2').value);
-  const durIst2 = Number(document.getElementById('durasiIstirahat2').value);
-
+  const istirahatDurasi = Number(document.getElementById('durasiIstirahat').value);
+  const posisiIstirahat = Number(document.getElementById('posisiIstirahat').value);
   const days = getActiveDays();
+
   const scheduleModel = { jam_mulai: jamMulai, jp_menit: jpDurasi, hari: {} };
 
   output.innerHTML = '';
-  
   days.forEach(day => {
     const jpInput = document.querySelector(`.jp-count[data-day="${day}"]`);
     const jpCount = jpInput ? Number(jpInput.value) : 8;
-    
-    const slots = generateDaySlots(jamMulai, jpCount, jpDurasi, posIst1, durIst1, posIst2, durIst2);
+    const slots = generateDaySlots(jamMulai, jpCount, jpDurasi, posisiIstirahat, istirahatDurasi);
 
     scheduleModel.hari[day] = slots.map(s => ({
       ...s,
       id: s.tipe === 'jp' ? `${day}-${s.jp_ke}` : `${day}-istirahat-${s.mulai}`
     }));
 
-    // Menghitung total waktu aktual (durasi JP + durasi istirahat yang benar-benar masuk)
-    let totalDurasiIstirahat = 0;
-    if (posIst1 > 0 && posIst1 < jpCount) totalDurasiIstirahat += durIst1;
-    if (posIst2 > 0 && posIst2 < jpCount) totalDurasiIstirahat += durIst2;
-    
-    const totalMenit = (jpCount * jpDurasi) + totalDurasiIstirahat;
-
+    const totalMenit = jpCount * jpDurasi + istirahatDurasi;
     const card = document.createElement('div');
     card.className = 'card';
-    
     const rows = slots.map(s => s.tipe === 'jp'
       ? `<tr><td class="jam">${s.mulai}–${s.selesai}</td><td>JP ke-${s.jp_ke}</td></tr>`
-      : `<tr class="istirahat"><td class="jam">${s.mulai}–${s.selesai}</td><td>${s.label}</td></tr>`
+      : `<tr class="istirahat"><td class="jam">${s.mulai}–${s.selesai}</td><td>ISTIRAHAT</td></tr>`
     ).join('');
-    
     card.innerHTML = `
       <h3>${day} <span class="total">${jpCount} JP · ~${Math.round(totalMenit/60*10)/10} jam</span></h3>
       <table>${rows}</table>
